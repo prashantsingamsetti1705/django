@@ -1,0 +1,596 @@
+
+DJANGO @ 4:00 PM | Mr.Mahesh [24th March]
+Mr.Mahesh
+Upcoming
+Woohoo, no work due soon!
+Material
+Mahesh Python posted a new material: 4/4/25(Django)
+Posted Yesterday
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 3/4/25(Django)
+Posted Apr 3
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: Day-1 To Till Class Notes(2/4/25)
+Posted Apr 2
+
+django.txt
+Text
+  
+Django with Rest API @ 4:00 PM IST by Mr Mahesh 
+Day-1 https://youtu.be/7QD_BxkxaQg
+Day-2 https://youtu.be/ApSuPNEPEWw
+
+Django project vs Django Application
+--------------------------------------------------------
+How to create project?
+-----------------------------------
+D:\>mkdir DJANGO_26MAR_4PM
+D:\>cd DJANGO_26MAR_4PM
+D:\DJANGO_26MAR_4PM>django-admin startproject firstproject
+				(or)
+		py -m django startproject firstproject
+D:\DJANGO_26MAR_4PM>tree /f
+
+1).__init__.py:
+--------------------
+	It is a blank python script. Because of this special name, Django treated this folder as python package.
+
+2).settings.py
+--------------------
+	In this file we have to specify all our project settings and configurations like instaled apps, middleware configuration, database configurations etc....
+
+3).urls.py:
+---------------
+	Here we have to storeall our url-patterns of our project.
+	For every view(web page), wehave to define separate url-pattern. End user can use url-pattern to access our web pages.
+
+4).wsgi.py
+---------------
+	wsgi--->Web Server Gateway Interface
+	We can use this file while developing our application in production on online server.
+
+5).manage.py:
+---------------------
+	The most commonly used python script is manage.py
+	It is a commandline utility to interact with django project in various ways like to run development server, run tests, create migrations etc......
+
+command line args:
+------------------------------
+			py test.py 10 20 30 40
+
+These args will store in argv
+Which is available in sys module
+Type of argv is :list
+
+from sys import argv
+print('The number of command line args:',len(argv))
+print('The list of command line args:',argv)
+for i in argv:
+	print(i)
+
+How to run django development server?
+------------------------------------------------------------
+-->We have to move to the manage.py file location and we have to execute
+		D:\DJANGO_26MAR_4PM\firstproject>py manage.py runserver
+-->Now server will started.
+
+How to send first request:
+----------------------------------------
+Open browser and send request:
+		http://127.0.0.1:8000
+
+
+27/3/25
+========
+Roles of web server:
+==================
+-->Web server will provide environment to run web application.
+-->Web server is responsible to receive the request and forward request to the corresponding web component based on url-pattern and to provide response to the end user.
+-->Django framework is responsible to provide development server. Even django framework provides on inbuild database sqlite3.
+
+Note:
+	Once we started server a special DB related files will be generated in our project folder structure.
+
+Creation of first web application:
+--------------------------------------------------
+-->Once we create Django project, we can create any number f applications in that project.
+-->To create an application:
+	D:\DJANGO_26MAR_4PM\firstproject>py manage.py startapp firstapp
+
+The following folder structure got created under firstapp
+-------------------------------------------------------------------------------------
+D:.
+│   admin.py
+│   apps.py
+│   models.py
+│   tests.py
+│   views.py
+│   __init__.py
+│
+└───migrations
+        __init__.py
+
+1).__init__.py:
+	It is ablank python script.
+
+2).admin.py:
+	We can register our models in this file. Django will use these models with Django's admin interface.
+
+3).apps.py:
+	In this file we have to specify application's specific configurations.
+
+4).models.py:
+	In this file we have to store application's data models.
+
+5).tests.py:
+	In this file we have to specify test functions to test our code.
+
+6).views.py:
+	In this file we have to save functions that handles requests and return required response.
+
+7).Migration folder:
+	This directory stores database specific information related to models.
+
+Note:
+	The most important commonly used files in every project are views.py and models.py
+
+Activities required for application
+---------------------------------------------------
+Activity-1:Add our application in settings.py, so that django aware about our application.
+
+settings.py
+----------------
+INSTALLED_APPS = [
+	-------
+	'firstapp'
+]
+
+Activity-2:
+	Create a view function for our application in views.py
+	View is responsible to prepare required response to the end user. i.e view contains business logic.
+	There are 2-types of views:
+			1).Function based views(FBVs)
+			2).Class based views(CBVs)
+
+views.py
+-------------
+from django.http import HttpResponse
+def display(request):
+    s = '<h1>Hello Students Welcome To Mahesh Sir Django Classes</h1>'
+    return HttpResponse(s)
+
+Note:
+	1.Each view will be specified as one function in views.py
+	2.In the above program display is the name of the function which is nothing but one view.
+	3.Each view should take atleast one argument(request)
+	4.Each view should retune HttpResponse object with required response.
+
+-->View can accept request as input and perform required operations and provide proper response to the end user.
+
+Activity-3:
+	Define url-pattern for our view in urls.py
+	This url-pattern will be used by end-user to send request for our view
+
+urls.py
+----------
+from firstapp import views
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('wish/', views.display),
+]
+
+-->Whenever end user sending the request with url-pattern:wish then display() function will be executed and provide required response.
+
+Activity-4:
+	start server send request
+	py manage.py runserver
+	http://127.0.0.1:8000/wish/
+
+28/3/25
+-------------
+Django with Rest API @ 4:00 PM IST by Mr Mahesh 
+Day-1 https://youtu.be/7QD_BxkxaQg
+Day-2 https://youtu.be/ApSuPNEPEWw
+Day-3 https://youtu.be/M0Mej4tPi8Q
+Day-4 https://youtu.be/oA7Gq7OpUto
+============================================
+1).Create project
+2).Create application
+3).Add app in settings.py
+4).Create a FBV
+5).Define url-pattern
+6).Start sever send request
+
+Http Request flow in Django Application:
+--------------------------------------------------------------
+-->Whenever end user sending the request first django development server will get that request.
+-->From the request Django will identify url-pattern and by using urls.py, the corresponding view will be identified.
+-->The request will forward to the view. The corresponding function will be executed and provide required response to the end user.
+
+write a django app to send request to display server time as response
+---------------------------------------------------------------------------------------------------------
+D:\DJANGO_26MAR_4PM>django-admin startproject secondproject
+D:\DJANGO_26MAR_4PM>cd secondproject
+D:\DJANGO_26MAR_4PM\secondproject>py manage.py startapp firstapp
+
+Add app in settings.py
+
+views.py
+-------------
+import datetime
+from django.http import  HttpResponse
+def time_info(request):
+    date = datetime.datetime.now()
+    msg = '<h1>Hello Friends Good Evening!!!!</h1><hr>'
+    msg += '<h2>Now server time is:'+str(date)+'</h2>'
+    return HttpResponse(msg)
+
+urls.py:
+-----------
+	path('time/',views.time_info)
+
+Q.Single application with multiple views
+--------------------------------------------------------------
+django-admin startproject maheshjobs
+py manage.py startapp jobsapp
+Add application in settings.py
+
+views.py
+-------------
+from django.http import  HttpResponse
+def hyd_jobs_info(request):
+    s = '<h1>Hyderabad Jobs Information</h1>'
+    return HttpResponse(s)
+def bng_jobs_info(request):
+    s = '<h1>Bangalore Jobs Information</h1>'
+    return HttpResponse(s)
+def pune_jobs_info(request):
+    s = '<h1>Pune Jobs Information</h1>'
+    return HttpResponse(s)
+def bihar_jobs_info(request):
+    s = '<h1>Bihar Jobs Information</h1>'
+    return HttpResponse(s)
+
+urls.py
+----------
+	path('hyd/', views.hyd_jobs_info),
+    path('bng/', views.bng_jobs_info),
+    path('pune/', views.pune_jobs_info),
+    path('bihar/', views.bihar_jobs_info),
+
+Q.
+add = lambda x,y:x+y
+result = add(3,5)*(lambda x:x**2)(2)
+print(result)#32
+
+1/4/25
+------------
+Django with Rest API @ 4:00 PM IST by Mr Mahesh 
+Day-1 https://youtu.be/7QD_BxkxaQg
+Day-2 https://youtu.be/ApSuPNEPEWw
+Day-3 https://youtu.be/M0Mej4tPi8Q
+Day-4 https://youtu.be/oA7Gq7OpUto
+Day-5 https://youtu.be/GmJ5Hx0oojc
+===================================================
+Q.Based on time good mng, good aft,good evenung & good night
+--------------------------------------------------------------------------------------------------
+django-admin startproject datetimeproject
+py manage.py startapp testapp
+Add app in settings.py
+
+views.py
+------------
+import datetime
+from django.http import HttpResponse
+def date_time_info(request):
+    date = datetime.datetime.now()
+    h = int(date.strftime('%H'))
+    msg = '<h1>Hello guest very '
+    if h < 12:
+        msg += 'Good Morning'
+    elif h < 16:
+        msg += 'Good Afternoon'
+    elif h < 21:
+        msg += 'Good Evening'
+    else:
+        msg += 'Good Night'
+    msg += '</h1><hr>'
+    msg += '<h1>Now the server time is:'+str(date)+'<h1>'
+    return HttpResponse(msg)
+
+urls.py:
+	path('time/',views.datetime_info)
+
+Single project with multiple applications
+--------------------------------------------------------------
+django-admin startproject multiappProject
+py manage.py startapp firstapp
+py manage.py startapp secondapp
+Add 2-apps in settings.py
+
+firstapp views.py
+-------------------------
+from django.http import  HttpResponse
+def wish1(request):
+    return HttpResponse('<h1>Hello This Is From First Applocation</h1>')
+
+secondapp views.py
+------------------------------
+def wish2(request):
+    return HttpResponse('<h1>Hello This Is From Second Applocation</h1>')
+
+urls.py
+-----------
+from firstapp import views as v1
+from secondapp import views as v2
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('wish1/', v1.wish1),
+    path('wish2/', v2.wish2),
+]
+Another way
+-------------------
+from firstapp.views import wish1
+from secondapp.views import wish2
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('wish1/', wish1),
+    path('wish2/', wish2),
+]
+
+Defining URL patterns in Application Level instead of Project level:
+=============================================================
+-->A Django project can contains multiple applications and each application contains multiple views. Defining url-pattern for all views of applications inside urls.py file of project creates maintenance problem and reduces re-usability of applications.
+
+-->We can solve this problem by defining url-pattern at application level instead of project level. For every application we have to create a separate urls.py file and we have to define all that application specific urls in that file. We have to link this application level urls.py file to project level urls.py file by using include() function.
+
+
+2/4/25
+------------
+Defining URL patterns in Application Level instead of Project level:
+=============================================================
+-->A Django project can contains multiple applications and each application contains multiple views. Defining url-pattern for all views of applications inside urls.py file of project creates maintenance problem and reduces re-usability of applications.
+
+-->We can solve this problem by defining url-pattern at application level instead of project level. For every application we have to create a separate urls.py file and we have to define all that application specific urls in that file. We have to link this application level urls.py file to project level urls.py file by using include() function.
+
+Ex:
+-----
+django-admin startproject baseproject
+py manage.py startapp testapp
+
+views.py
+-------------
+from django.http import HttpResponse
+def first_view(request):
+    return HttpResponse('<h1>First View Response</h1>')
+def second_view(request):
+    return HttpResponse('<h1>Second View Response</h1>')
+def third_view(request):
+    return HttpResponse('<h1>Third View Response</h1>')
+
+-->Create a separate file urls.py file inside application
+
+urls.py
+----------
+from django.urls import path
+from . import views
+urlpatterns = [
+    path('first/', views.first_view),
+    path('second/', views.second_view),
+    path('third/', views.third_view),
+]
+
+-->Include this app level urls.py inside project level urls.py file
+
+project level urls.py
+-------------------------------
+from django.urls import path,include
+urlpatterns = [
+	-------
+    path('testapp/', include('testapp.urls')),
+]
+
+start server send request:
+	http://127.0.0.1:8000/testapp/first/
+	http://127.0.0.1:8000/testapp/fsecond/
+	http://127.0.0.1:8000/testapp/third/
+
+Note:
+--------
+	We can see re-usability of application in other projects just with only 2-lines addition.
+			1).settings.py--->Add application name
+			2).urls.py--->just add:path('ulsapp/',include('urlsapp.urls'))
+
+Advantages:
+	The main advantages of defining url-pattern at application level instead of project level are:
+		1).It promotes re-usability of django applications across multiple projects.
+		2).Project level urls.py will be clean and more readable.
+
+Ex:
+-----
+django-admin startproject applevelurlsproject
+py manage.py startapp testapp
+
+views.py
+-------------
+from django.http import  HttpResponse
+def exams_view(request):
+    return HttpResponse('<h1>Exams View</h1>')
+def attendance_view(request):
+    return HttpResponse('<h1>Attendance View</h1>')
+def fees_view(request):
+    return HttpResponse('<h1>Fees View</h1>')
+
+urls.py--->Application level
+------------------------------------------
+from django.urls import path
+from . import views
+urlpatterns = [
+    path('exams/', views.exams_view),
+    path('attendance/', views.attendance_view),
+    path('fees/', views.fees_view),
+]
+
+Create another project:
+------------------------------------
+django-admin startproject maheshproject
+
+-->Copy testapp from applicationulsproject and paste it in current project, then include app level urls in project level urls.
+
+urls.py-->project level
+--------------------------------
+from django.urls import path,include
+urlpatterns = [
+    --------
+    path('testapp/',include('testapp.urls')),
+]
+
+CHAPTER-3:Django Templates & Static Files
+========================================
+Django Templates:
+----------------------------
+-->It is not reommended to write html code inside python script(views.py file)
+because:
+	1).It reduces readability because python code mixed with HTML code.
+	2).No separation of roles. Python developers has to concentrate on both python code and HTML code.
+	3).It does not promote re-usability of code.
+-->We can overcome these problems by separating HTML code into a separate html file. This html file is nothing but template.
+-->From python file(views.py) we can use these templates based on our requirement.
+-->We have to write templates at project level only, we can use these templates in multiple applications.
+
+Django Templates:
+-----------------------------
+pathlib ---> module
+Path --> class name
+
+pathlib module provides various classes representing file system paths based on different operating system.
+
+from pathlib import Path
+print(__file__)#It returns the name f the file:test.py
+fpath = Path(__file__)
+print(type(fpath))#<class 'pathlib._local.WindowsPath'>
+complete_path = fpath.resolve()
+print(complete_path)#D:\MaheshClasses\test.py
+print(Path(__file__).resolve().parent)#D:\MaheshClasses
+print(Path(__file__).resolve().parent.parent)#D:\
+
+Note:
+	The main advantage of this approach is we are not required to hard code system specific paths(locations) in python script.
+
+View meant for business logic
+Template meant for presentation logic/frontend
+
+MVC design pattern/architecture:
+----------------------------------------------------
+M--->Model(Business logic)
+V-->View(Presentation logic)
+C-->Controller(Co-ordination)
+
+MVT design pattern/architecture:
+---------------------------------------------------
+M-->Model
+V-->Views(Business logic--->Python files)
+T-->Template(Presentation Layer)
+Steps to develop Template based application:
+---------------------------------------------------------------------
+Step-1:Create project
+	django-admin startproject templatesproject
+
+Step-2:Create an application
+	py manage.py startapp testapp
+
+Step-3:Add application in settings.py
+
+Step-4:
+	Create a 'templates' folder inside main project folder.
+	In that templates folder create a separate folder named with testapp to hold that particular application specific templates.
+
+Step-5:Add templates folder to settings.py file so that django can aware of our templates.
+	TEMPLATES = [
+			'DIRS' : [D:\DJANGO_26MAR_4PM\templatesproject\templates]
+	]
+-->It is not recommended to hard code system specific location in settings.py file.
+To overcome this problem, we can generate templates directory path programmatically as.
+			BASE_DIR = Path(__file__).resolve().parent.parent
+			TEMPLATE_DIR = BASE_DIR/'templats'
+-->Specify this TEMPLATE_DIR inside settings.py
+			'DIRS': [TEMPLATE_DIR]
+
+Step-6:
+	Create html file inside templatesproject/templates/testapp folder. This html file is nothing but templates.
+
+wish.html
+---------------
+<body>
+    <h1>Welcome To Django Templates Demo</h1>
+    <h2>Second hero of django in MVT:Templates</h2>
+</body>
+
+Step-7:Define FBV inside views.py file
+
+views.py
+-------------
+def wish(request):
+    return render(request,'testapp/wish.html')
+
+urls.py:
+	path('wish/',views.wish)
+
+Template Tags:
+-----------------------
+-->From python views.py we can inject dynamic content to the template file by using template tags.
+-->Template tags also knw as Template variables.
+-->Take special care about template tag syntax it is not python syntax and not HTML syntax it is Django syntax.
+
+Template tag syntax for inserting text data:{{insert_date}}
+---------------------------------------------------------------------------------------
+-->This template tag we have to place inside template file(i.e html file)and we have to provide insert_date value from the python views.py file.
+
+Application to send date and time from views.py to template file:
+---------------------------------------------------------------------------------------------------
+wish.html
+---------------
+<body>
+    <h1>Welcome To Django Templates Demo</h1>
+    <h2>Now server Time is:{{insert_date}}</h2>
+</body>
+
+views.py
+------------
+import datetime
+def wish(request):
+    date = datetime.datetime.now()
+    my_dict = {'insert_date':date}
+    return render(request,'testapp/wish.html',context=my_dict)
+
+Note:
+	The values to the template variables should be passed from the views in the form of dictionary as argument to context. But context is optional
+
+To display date,time and student info
+---------------------------------------------------------
+views.py
+-------------
+def wish(request):
+    date = datetime.datetime.now()
+    name = 'Sunny'
+    marks = 98
+    rollno = 101
+    my_dict = {'insert_date':date,'name':name,'marks':marks,'rollno':rollno}
+    return render(request,'testapp/wish.html',my_dict)
+
+wish.html
+---------------
+<ol>
+        <li>Name:{{name}}</li>
+        <li>Marks:{{marks}}</li>
+        <li>RollNo:{{rollno}}</li>
+</ol>
+
+Applicaion to wish end user based on time
+-----------------------------------------------------------------
