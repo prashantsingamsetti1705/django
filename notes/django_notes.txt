@@ -594,3 +594,126 @@ wish.html
 
 Applicaion to wish end user based on time
 -----------------------------------------------------------------
+Application to wish end user based on time
+------------------------------------------------------------------
+views.py
+------------
+def wish(request):
+    date = datetime.datetime.now()
+    msg = "Hello guest very very good "
+    h = int(date.strftime('%H'))
+    if h <= 12:
+        msg += 'Morning'
+    elif h < 16:
+        msg += 'Afternoon'
+    elif h < 21:
+        msg += 'Evening'
+    else:
+        msg += 'Night'
+    my_dict = {'insert_date':date,'insert_msg':msg}
+    return render(request,'testapp/wish.html',my_dict)
+
+wish.html
+---------------
+<body>
+    <h1>{{insert_msg}}</h1>
+    <h2>Hello guest now server time is:{{insert_date}}</h2>
+</body>
+
+Applicaion:
+-----------------
+End User:
+	Hello Friend, The current server time:date and time
+	Course Information:
+		Name:Django
+		Prerequisite:Python
+		Current Batch Students are:
+
+App:
+-------
+django-admin startproject templateproject2
+py manage.py startapp testapp
+Add application in settings.py
+-->Create templates folder in main project folder. Add TEMPLATE_DIR in settings.py
+
+views.py
+-------------
+import datetime
+def info_view(request):
+    time = datetime.datetime.now()
+    name = 'Django'
+    prerequisite = 'Python'
+    my_dict = {'time':time,'name':name,'prerequisite':prerequisite}
+    return render(request,'testapp/results.html',my_dict)
+
+results.html
+-------------------
+<body>
+    <h1>Hello Friend, The Server Time Is:{{time}}</h1>
+    <h2>Course Name:{{name}}</h2>
+    <h2>Prerequisite:{{prerequisite}}</h2>
+    <ul>
+        <li>Good to job very easily</li>
+        <li>Learning is also very easy</li>
+        <li>You can claim 3 to 4 years of exp</li>
+        <li>It is very helpful for freshers</li>
+    </ul>
+    <table border="3">
+        <thead>
+            <th>S.No</th>
+            <th>Name</th>
+            <th>Feedback</th>
+        </thead>
+        <tr>
+            <td>101</td>
+            <td>Sunny</td>
+            <td>Good</td>
+        </tr>
+      </table>
+</body>
+
+Astrology Project:
+----------------------------
+django-admin startproject astrologyproject
+py manage.py startapp testapp
+Add app in settings.py
+Create 'templates' and add in settings.py
+
+views.py
+-------------
+import datetime,random
+def result_view(request):
+    msg_list = [
+        'The golden days ahead',
+        'Better to sleep more tim even in classroom',
+        'Tomorrow will be the best day of your life',
+        'Tomorrow is the prefect day to propose ur GF',
+        'Very soon you will get job'
+    ]
+    names_list = ['Sunny','Radhika','Lilly','Katrina','Kareena','Deepika','Samantha']
+    time = datetime.datetime.now()
+    h = int(time.strftime('%H'))
+    if h < 12:
+        s = 'Good Morning'
+    elif h < 16:
+        s = 'Good Afternoon'
+    elif h < 21:
+        s = 'Good Evening'
+    else:
+        s = 'Good Night'
+    name = random.choice(names_list)
+    msg = random.choice(msg_list)
+    my_dict = {'time':time,'name':name,'msg':msg,'wish':s}
+    return render(request,'testapp/astrology.html',my_dict)
+
+astrology.html
+----------------------
+<body>
+  <h1>Hello Friend, <span>{{wish}}</span></h1>
+  <h2>Now The Server Time Is:<span>{{time}}</span></h2>
+  <h1>Astrology Info For Mahesh <span>{{msg}}</span></h1>
+  <h2>Very soon, you are going to get marriage with:<span>{{name}}</span></h2>
+</body>
+
+urls.py:
+	path('astr/',views.result_view)
