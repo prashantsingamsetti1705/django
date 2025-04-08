@@ -717,3 +717,61 @@ astrology.html
 
 urls.py:
 	path('astr/',views.result_view)
+Working with static files:
+======================
+-->Up to this just we injected normal text data into templates by using template tags.
+-->But sometimes our requirement is to insert static files like images,css files etc inside template file.
+
+Process to include static files inside template:
+----------------------------------------------------------------------
+1).Create folder named with 'static' inside main project folder. It is exactly same as creating 'templates' folder.
+2).In that 'static' folder create 'images' folder to place image files.
+3).Add static directory path in settings.py file, so that django can aware of our images.
+
+Create Project:
+----------------------
+django-admin startproject staticfilesproject
+py manage.py startapp testapp
+Add app in settings.py
+
+settings.py
+-----------------
+STATIC_DIR = BASE_DIR/'static'
+
+STATIC_URL = 'static/'
+STATICFILES_DIRS = [STATIC_DIR]
+
+-->Make sure all the paths are correct or not
+		http://127.0.0.1:8000/static/images/sunny.jpg
+
+-->Us templates tag to insert image
+	At the beginning of HTML just after <!DOCTYPE html>, we have to include the template tag
+		{% loadstatic %}
+
+-->Just we have to conveying to the django to load all static files.
+
+We have to include image file as:
+		<img src="" alt="">
+
+results.html
+------------------
+<body>
+    <h1>Hello friends welcome to Mahesh Sir Classes!!!!!!!!!!!</h1>
+    <h2>The available subjects are:</h2>
+    <ul>
+        <li>{{s1}}</li>
+        <li>{{s2}}</li>
+        <li>{{s3}}</li>
+    </ul>
+    <h1>Brand Ambassador for my python classes are:</h1>
+    <img src="{% static 'images/sunny.jpg' %}" alt="">
+</body>
+
+views.py
+------------
+def info_view(request):
+    subjects = {'s1':'Python','s2':'Django','s3':'REST_API'}
+    return  render(request,'testapp/results.html',subjects)
+
+urls.py:
+	path('info/',views.info_view)
