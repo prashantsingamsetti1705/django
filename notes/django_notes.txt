@@ -775,3 +775,116 @@ def info_view(request):
 
 urls.py:
 	path('info/',views.info_view)
+How to include css files:
+-------------------------------------
+Mahesh News Portal Application:
+--------------------------------------------------
+django-admin startproject maheshnewsproject
+py manage.py startapp testapp
+Add app in settings.py
+
+Create a folder templates
+Update this one settings.py
+	TEMPLATE_DIR = BASE_DIR/'templates'
+
+Create a folder 'static' folder
+	Inside 'static' folder create 'css' and 'images' folders
+			STATIC_DIR = BASE_DIR/'static'
+			STATICFILES_DIRS = [STATIC_DIR]
+
+views.py
+-------------
+def news_info(request):
+    return  render(request,'testapp/index.html')
+
+index.html
+-----------------
+<title>Mahesh News Portal</title>
+ <link rel="stylesheet" href="{% static 'css/demo.css' %}">
+<body>
+    <h1>Welcome To MAHESH NEWS Portal</h1>
+    <img src="{% static 'images/news.jpg' %}" alt="">
+    <ul>
+        <li><a href="#">Movies Information</a></li>
+        <li><a href="#">Sports Information</a></li>
+        <li><a href="#">Politics Information</a></li>
+    </ul>
+</body>
+
+urls.py:
+	path('',views.news_info)
+
+views.py
+------------
+def movies_info(request):
+    head_msg = 'Movies Information'
+    sub_msg1 = 'MAD square is very good movie'
+    sub_msg2 = 'OG will come very soon....'
+    sub_msg3 = 'Planning for Aashiqui-3 with Mahesh Sir & Sunny Leone'
+    my_dict = {'head_msg':head_msg,'sub_msg1':sub_msg1,'sub_msg2':sub_msg2,
+	'sub_msg3':sub_msg3}
+    return render(request,'testapp/news.html',my_dict)
+
+urls.py:
+	 path('movie/', views.movies_info)
+
+index.html:
+	<a href="movie/">Movies Information</a>
+
+views.py
+-------------
+def sports_info(request):
+    head_msg = 'Sports Information'
+    sub_msg1 = 'Present IPL is going on...'
+    sub_msg2 = 'Yesterday won the match RCB'
+    sub_msg3 = 'Today match was KKR vs LSG'
+    my_dict = {'head_msg':head_msg,'sub_msg1':sub_msg1,'sub_msg2':sub_msg2,
+	'sub_msg3':sub_msg3}
+    return render(request,'testapp/news.html',my_dict)
+
+urls.py:
+	path('sports/', views.sports_info)
+index.html
+	<a href="sports/">Sports Information</a>
+
+views.py
+------------
+def politics_info(request):
+    head_msg = 'Politics Information'
+    sub_msg1 = 'India PM was Modi ji'
+    sub_msg2 = 'AP CM was Chandra Babu Naidu'
+    sub_msg3 = 'AP Dy Cm was Pawan Kalyan'
+    my_dict = {'head_msg':head_msg,'sub_msg1':sub_msg1,'sub_msg2':sub_msg2,
+	'sub_msg3':sub_msg3}
+    return render(request,'testapp/news.html',my_dict)
+
+urls.py:
+	path('politics/', views.politics_info)
+index.html
+	<a href="politics/">Politics Information</a>
+
+news.html
+----------------
+<body>
+  <h1>{{head_msg}}</h1>
+  <ul>
+    <li>{{sub_msg1}}</li>
+    <li>{{sub_msg2}}</li>
+    <li>{{sub_msg3}}</li>
+  </ul>
+{% if type == 'movies' %}
+<img src="{% static 'images/1.jpg' %}" alt="">
+<img src="{% static 'images/2.jpg' %}" alt="">
+<img src="{% static 'images/3.jpg' %}" alt="">
+{% elif type == 'sports' %}
+<img src="{% static 'images/4.jpg' %}" alt="">
+<img src="{% static 'images/5.jpg' %}" alt="">
+<img src="{% static 'images/6.jpg' %}" alt="">
+{% elif type == 'politics' %}
+<img src="{% static 'images/7.jpg' %}" alt="">
+<img src="{% static 'images/8.jpg' %}" alt="">
+<img src="{% static 'images/9.jpg' %}" alt="">
+{% endif %}
+</body>
+
+CHAPTER-4:Working with Models & Databases
