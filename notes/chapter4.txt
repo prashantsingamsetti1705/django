@@ -1,0 +1,109 @@
+CHAPTER-4:Working with Models & Databases
+=========================================
+-->As part of web application development, compulsory we required to interact with database to store our data and to retrieve our stored data.
+-->Django provides a in-built support for database operations. Django provides one in-built database sqlite3.
+-->For small to medium applications this DB is enough. Django can provide support for other DB also like Oracle,Mysql,MongoDB etc....
+
+Database Configuration:
+------------------------------------
+The default sqlite3 configuration in settings.py file are declared as:
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+}
+
+Database connection with Mysql
+-------------------------------------------------
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'djangodb',
+        'USER':'root',
+        'PASSWORD':'root',
+        'HOST':'localhost',
+        'PORT':3306
+    }
+}
+
+Database connection with Oracle:
+---------------------------------------------------
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.oracle',
+        'NAME': 'ORCL',
+        'USER':'scott',
+        'PASSWORD':'tiger',
+        'HOST':'localhost',
+        'PORT':1521
+    }
+}
+
+-->If we dont want to use sqlite3 database then we have to configure our own database with the following parameters.
+		1).ENGINE:Name ofthe database engine
+		2).NAME:Database name
+		3).USER:Database login user name
+		4).PASSWORD:Database login password
+		5).HOST:The machine on which database server is running
+		6).PORT:THe port number on which databse server is running
+Note:
+	Most of the time HOST & PORT are optional.
+
+How to check Djangodatabase connection
+----------------------------------------------------------------
+-->We can check whether django database configurations are properly configured or not by using the following command from the shell.
+
+D:\DJANGO_26MAR_4PM\maheshproject>py manage.py shell
+>>> from django.db import connection
+>>> c = connection.cursor()
+
+-->If we are not getting any error means our DB configurations are proper.
+
+Model Class:
+-------------------
+-->A model is a python class which contains database information.
+-->It contains fields and behaviours of the data what we are storing.
+-->Each model maps to one database table.
+-->Every model is a python class which is the child class of (django.db.models.Model)
+-->Each attribute of the model represents database field(column name in table).
+-->We have to write model classes inside models.py file.
+
+App
+------
+django-admin startproject modelproject
+py manage.py startapp testapp
+Add app in settings.py
+
+models.py
+----------------
+class Employee(models.Model):
+    eno = models.IntegerField()
+    ename = models.CharField(max_length=30)
+    esal = models.FloatField()
+    eaddr = models.CharField(max_length=30)
+
+Note:
+	This model class will be converted into database table. Django is responsible for this conversion.
+
+table_name	:appname_classname
+					:testap_employee
+Fields:eno,ename,esal,eaddr and one extra field:id
+Behaviours:eno is integer, ename is char.
+Model class = Database table name + field name + field behaviours
+
+Converting Model class into Database specific SQL code:
+--------------------------------------------------------------------------------------
+Once we create Model class, we have to migrate the corresponding SQL code, for this we have to use makemigrations
+					py manage.py makemigrations
+
+How to see the corresponding SQL code of migrations:
+-----------------------------------------------------------------------------------
+D:\DJANGO_26MAR_4PM\modelproject>py manage.py sqlmigrate testapp 0001
+BEGIN;
+--
+-- Create model Employee
+--
+CREATE TABLE "testapp_employee" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "eno" integer NOT NULL, "ename" varchar(30) NOT NULL, "esal" real NOT NULL, "eaddr" varchar(30) NOT NULL);
+COMMIT;
