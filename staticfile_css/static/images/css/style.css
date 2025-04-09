@@ -1,0 +1,15 @@
+body {
+    background-color:yellow;
+}
+*{
+    padding:5px;
+    marrgin:5px;
+}
+h1 {
+    text-align:center;
+    texr-colour:bule;
+}
+ul {
+    boder:1px soild red;
+    boder-radius:5px
+}
