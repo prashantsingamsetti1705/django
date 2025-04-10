@@ -107,3 +107,117 @@ BEGIN;
 --
 CREATE TABLE "testapp_employee" ("id" integer NOT NULL PRIMARY KEY AUTOINCREMENT, "eno" integer NOT NULL, "ename" varchar(30) NOT NULL, "esal" real NOT NULL, "eaddr" varchar(30) NOT NULL);
 COMMIT;
+
+How to execute generated SQL code(migrate command):
+--------------------------------------------------------------------------------------
+After generating SQL code, we have to execute that sql code to create table in database. For this we have to use 'migrate' command
+						py manage.py migrate
+
+Q.What is the advantage of creating tables with 'migrate' command?
+-------------------------------------------------------------------------------------------------------
+If we use 'migrate' command, then all django required tables will be created in addition to our application specific tables. If we create table manually with sql code, then only our application specific table will be created and django may not work properly. Hence it is highly recommended to create tables with 'migrate' command.
+
+How to check created table in Django admin interface:
+-----------------------------------------------------------------------------------
+We have to register model class in 'admin.py' file
+
+admin.py
+--------------
+from testapp.models import Employee
+admin.site.register(Employee)
+
+Creation of super user to login to admin interface:
+----------------------------------------------------------------------------
+We can create super user by using the command:
+				py manage.py createsuperuser
+
+Q.Difference between makemigrations and migrate?
+------------------------------------------------------------------------------
+'makemigrations' is responsible to generate SQL code for python model class where as 'migrate' is responsible to execute the SQL code so that tables will be created in the database.
+
+Read data from the database and display for the end user?
+-----------------------------------------------------------------------------------------
+1).Start project
+2).Start app
+3).Add app in settings.py
+4).Add database configurations in settings.py
+5).Test database connections
+6).Create Model class
+7).Makemigrations and migrate
+8).Register model and modeladmin inside admin.py
+9).createsuperuser
+10).login to admin interface and check table created or not
+11).Template file and static file and corresponding configurations in settings.py
+12).view function to communicate with database and to get data and send this data to template file which is responsible to display to end user.
+
+App:
+-------
+django-admin startproject modelproject2
+py manage.py startapp testapp
+Add app in settings.py
+
+models.py
+---------------
+class Employee(models.Model):
+    eno = models.IntegerField()
+    ename = models.CharField(max_length=30)
+    esal = models.FloatField()
+    eaddr = models.CharField(max_length=30)
+
+makemigrations and migrate
+
+admin.py
+--------------
+from testapp.models import Employee
+class EmployeeAdmin(admin.ModelAdmin):
+    list_display = ['eno','ename','esal','eaddr']
+admin.site.register(Employee,EmployeeAdmin)
+
+create super user
+
+views.py
+-------------
+from testapp.models import Employee
+def emp_data_view(request):
+    emp_list = Employee.objects.all()#select * from employee
+    my_dict = {'emp_list':emp_list}
+    return render(request,'testapp/emp.html',my_dict)
+
+emp.html
+---------------
+<body>
+    <h1>Employee List</h1>
+    {% if emp_list %}
+        <table border="3">
+            <thead>
+                <th>ENO</th>
+                <th>ENAME</th>
+                <th>ESAL</th>
+                <th>EADDR</th>
+            </thead>
+    {% for emp in emp_list %}
+            <tr>
+                <td>{{emp.eno}}</td>
+                <td>{{emp.ename}}</td>
+                <td>{{emp.esal}}</td>
+                <td>{{emp.eaddr}}</td>
+            </tr>
+    {% endfor %}
+        </table>
+    {% else %}
+		<p>No Records Found!!!!</p>
+    {% endif %}
+</body>
+
+emp1.css
+--------------
+body{
+    background:yellow;
+    color:red;
+}
+h1{
+    text-align:center;
+}
+table{
+    margin:auto;
+}
