@@ -221,3 +221,96 @@ h1{
 table{
     margin:auto;
 }
+Questions related to models and templates
+-----------------------------------------------------------------
+1).How to configure database inside settings.py?
+2).How to check the connections?
+3).How t define model class inside models.py?
+4).How to perform makemigrations?
+5).How to perform migrate?
+6).What is the difference between makemigrations and igrate?
+7).What is advantage of creating table by using migrate command instead of creating manually in the database?
+8).How to add model to admin interface in admin.py?
+9).To display total data, how to write model admin class inside admin.py?
+10).How to create super user?
+11).How to login to admin interface and add data to our table?
+12).How to see the generated sql code as result of makemigrations?
+
+How to generate fake data for application?
+----------------------------------------------------------------
+faker ----> module
+Faker -----> Class
+
+pip install faker
+
+Ex:
+-----
+from faker import Faker
+fakegen = Faker()
+name = fakegen.name()
+print(name)
+fname = fakegen.first_name()
+print(fname)
+lname = fakegen.last_name()
+print(lname)
+date1 = fakegen.date()
+print(date1)
+number = fakegen.random_number(5)     
+print(number)
+email1 = fakegen.email()
+print(email1)
+city = fakegen.city()
+print(city)
+print(fakegen.random_int(min=0,max=9999))
+print(fakegen.random_element(elements=('sunny','bunny','vinny','chinny','pinny')))
+
+Phone Number Generation:
+-----------------------------------------
+from random import *
+def phonenumbergen():
+	d1 = randint(6,9)
+	num = '' + str(d1)
+	for i in range(9):
+		num += str(randint(0,9))
+	return int(num)
+for i in range(10):
+	print(phonenumbergen())
+
+Insert data into model class by using faker module
+-----------------------------------------------------------------------------
+django-admin startproject modelproject3
+py manage.py startapp testapp
+Add app in settings.py
+Database configuration(Use Mysql)
+Create a database in Mysql(studentdb)
+
+settings.py
+----------------
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'studentdb',
+        'USER':'root',
+        'PASSWORD':'root'
+    }
+}
+
+models.py
+---------------
+class Student(models.Model):
+    rollno = models.IntegerField()
+    name = models.CharField(max_length=64)
+    dob = models.DateField()
+    marks = models.IntegerField()
+    email = models.EmailField()
+    phonenumber = models.BigIntegerField()
+    address = models.TextField()
+
+makemigrations and migrate
+
+admin.py
+---------------
+from testapp.models import Student
+class StudentAdmin(admin.ModelAdmin):
+    list_display = ['rollno','name','dob','marks','email','phonenumber','address']
+admin.site.register(Student,StudentAdmin)
