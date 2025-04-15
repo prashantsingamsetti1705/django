@@ -314,3 +314,95 @@ from testapp.models import Student
 class StudentAdmin(admin.ModelAdmin):
     list_display = ['rollno','name','dob','marks','email','phonenumber','address']
 admin.site.register(Student,StudentAdmin)
+Create a file named with populate.py in main project folder.
+
+populate.py
+------------------
+import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'modelproject3.settings')
+import django
+django.setup()
+
+from faker import Faker
+from random import *
+from testapp.models import Student
+fake = Faker()
+
+def phonenumbergen():
+	d1 = randint(6,9)
+	num = '' + str(d1)
+	for i in range(9):
+		num += str(randint(0,9))
+	return int(num)
+
+def populate(n):
+    for i in range(n):
+        frollno = fake.random_int(min=1,max=999)
+        fname = fake.name()
+        fdob = fake.date()
+        fmarks = fake.random_int(min=1,max=100)
+        femail = fake.email()
+        fphonenumber = phonenumbergen()
+        faddress = fake.address()
+        Student.objects.get_or_create(rollno=frollno,name=fname,dob=fdob,marks=fmarks,email=femail,phonenumber=fphonenumber,address=faddress)
+n = int(input('Enter number of records:'))
+populate(n)
+print(f'{n} Records inserted successfully.....')
+
+views.py
+-------------
+from testapp.models import Student
+def student_view(request):
+    student_list = Student.objects.all()
+    my_dict = {'student_list':student_list}
+    return render(request,'testapp/std.html',my_dict)
+
+std.html
+-------------
+<body>
+    <h1>Student Information</h1>
+    {% if student_list %}
+		{% for student in student_list %}
+		<h2>{{student.name}} information</h2>
+		<ul>
+			<li>Student RollNo:{{student.rollno}}</li>
+			<li>Student DOB:{{student.dob}}</li>
+			<li>Student Marks:{{student.marks}}</li>
+			<li>Student Email:{{student.email}}</li>
+			<li>Student Phone Number:{{student.phonenumber}}</li>
+			<li>Student Address:{{student.address}}</li>
+		</ul>
+		<hr>
+		{% endfor %}
+    {% else %}
+	    <p>No records found in database......</p>
+    {% endif %}
+</body>
+
+urls.py:
+	path('std/',views.student_view)
+
+vews.py
+------------
+student_list = Student.objects.filter(marks__lt=35)#marks < 35
+student_list = Student.objects.filter(marks__lte=35)#marks <= 35
+student_list = Student.objects.filter(name__startswith='S')
+student_list = Student.objects.all().order_by('marks')#ascending order
+student_list = Student.objects.all().order_by('-marks')#descending order
+
+How to generate fake data:
+-----------------------------------------
+1).By using faker module and our own customized code by using random module.
+
+Another way to generate fake data:
+-----------------------------------------------------
+-->django-seed is a django based custmized application to generate fake data for every model automatically.
+-->Internally this application using faker module only.
+
+Steps to use django-seed:
+---------------------------------------
+1).pip install django-seed
+2).add 'django-seed' in our INSTALLED_APPS inside settings.py
+3).generate and send fake data to the models.
+			py manage.py seed testapp --number = 10
+
