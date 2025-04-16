@@ -1,11 +1,12 @@
+
 import os
-import django
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'modeldummy.settings')
+import django
 django.setup()
 
 from faker import Faker
 from random import *
-from testapp.models import Student
+from testapp.models import Students
 fake = Faker()
 
 def phonenumbergen():
@@ -23,8 +24,7 @@ def populate(n):
         fmarks = fake.random_int(min=1,max=100)
         femail = fake.email()
         fphonenumber = phonenumbergen()
-        faddress = fake.address()
-        Student.objects.get_or_create(rollno=frollno,name=fname,dob=fdob,marks=fmarks,email=femail,phonenumber=fphonenumber,address=faddress)
+        Students.objects.get_or_create(rollno=frollno,name=fname,dob=fdob,marks=fmarks,email=femail,phonenumber=fphonenumber)
 n = int(input('Enter number of records:'))
 populate(n)
 print(f'{n} Records inserted successfully.....')
