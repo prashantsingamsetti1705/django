@@ -1,6 +1,9 @@
-
+import sys
 import os
+
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'modeldummy.settings')
+
 import django
 django.setup()
 
@@ -24,7 +27,7 @@ def populate(n):
         fmarks = fake.random_int(min=1,max=100)
         femail = fake.email()
         fphone = phonenumbergen()
-        Students.objects.get_or_create(rollno=frollno,name=fname,dob=fdob,marks=fmarks,email=femail,phonenumber=fphone)
+        Students.objects.get_or_create(rollno=frollno,name=fname,dob=fdob,marks=fmarks,email=femail,phone=fphone)
 n = int(input('Enter number of records:'))
 populate(n)
 print(f'{n} Records inserted successfully.....')
