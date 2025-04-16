@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>student info</h1>
+    {% if students_list %}
+    {% for s in students_list %}
+    <ul>
+        <li>student roll:{{ s.rollno }}</li>
+        <li>student dob:{{ s.dod }}</li>
+        <li>student name{{s.name }}</li>
+        <li>student email{{ s.email}}</li>
+        <li>studentmarks{{s.marks }}</li>
+    </ul>
+    {% endfor %}
+    {% else %}
+    <p>record not found</p>
+    {% endif %}
+</body>
+</html>
