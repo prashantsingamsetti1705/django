@@ -406,3 +406,115 @@ Steps to use django-seed:
 3).generate and send fake data to the models.
 			py manage.py seed testapp --number = 10
 
+How to generate fake data:
+-----------------------------------------
+1).By using faker module and our own customized code by using random module.
+
+Another way to generate fake data:
+-----------------------------------------------------
+-->django-seed is a django based custmized application to generate fake data for every model automatically.
+-->Internally this application using faker module only.
+
+Steps to use django-seed:
+---------------------------------------
+1).pip install django-seed
+2).add 'django-seed' in our INSTALLED_APPS inside settings.py
+3).generate and send fake data to the models.
+			py manage.py seed testapp --number = 10
+
+Generate fake data by using django-seed
+--------------------------------------------------------------
+django-admin startproject modelproject4
+py manage.py startapp testapp
+Add 'app' and 'django_seed' in settings.py
+
+Database configuration(Mysql)
+
+models.py
+---------------
+class Student(models.Model):
+    rollno = models.IntegerField()
+    name = models.CharField(max_length=30)
+    dob = models.DateField()
+    marks = models.IntegerField()
+    email = models.EmailField()
+    phonenumber = models.CharField(max_length=30)
+    address = models.TextField()
+
+-->makemigrations and migrate.
+
+admin.py
+--------------
+from testapp.models import Student
+class StudentAdmin(admin.ModelAdmin):
+    list_display = ['rollno','name','dob','marks','email','phonenumber','address']
+admin.site.register(Student,StudentAdmin)
+
+To insert data to the table:
+	py manage.py seed testapp --number=50
+
+Project Name:sunnyjobs
+-------------------------------------
+django-admin startproject sunnyjobs
+py manage.py startapp testapp
+Add app in settings.py
+
+Database:Mysql
+
+models.py
+---------------
+class HydJobs(models.Model):
+    date = models.DateField()
+    company = models.CharField(max_length=30)
+    title = models.CharField(max_length=30)
+    eligibility = models.CharField(max_length=30)
+    address =  models.CharField(max_length=30)
+    email = models.EmailField()
+    phonenumber = models.BigIntegerField()
+
+-->makemigrations and migrate
+
+admin.py
+--------------
+from testapp.models import HydJobs
+class HydJobsAdmin(admin.ModelAdmin):
+    list_display = ['date','company','title','eligibility','address','email','phonenumber']
+admin.site.register(HydJobs,HydJobsAdmin)
+
+views.py
+------------
+def home_page_view(request):
+    return render(request,'testapp/index.html')
+
+urls.py:
+	path('',views.home_page_view)
+
+index.html
+-----------------
+<body>
+    <div class="container">
+        <div class="jumbotron">
+            <h1>Welcome To SUNNYJOBS</h1>
+            <p>Contenious Job Updates For Every Hour......</p>
+            <a class="btn btn-primary btn-lg" href="#">Hyderabad Jobs</a> &nbsp;&nbsp;&nbsp;&nbsp;
+            <a class="btn btn-primary btn-lg" href="#">Pune Jobs</a> &nbsp;&nbsp;&nbsp;&nbsp;
+            <a class="btn btn-primary btn-lg" href="#">Bangalore Jobs</a>
+        </div>
+    </div>
+</body>
+
+jobs1.css
+--------------
+.container{
+    margin-top:200px;
+    text-align:center;
+}
+.container .jumbotron{
+    background:red;
+    color:white;
+}
+.jumbotron a{
+	background:yellow;
+	color:red;
+	border:2px solid green;
+}

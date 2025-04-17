@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% if type == 'hyd' %}
+    <h1>hyd Job Information</h1>
+        {% if hyd_list %}
+            {% for hyd in hyd_list %}
+                <ul>
+                    <li>Date: {{ hyd.date }}</li>
+                    <li>Company: {{ hyd.company }}</li>
+                    <li>Location: {{ hyd.location }}</li>
+                    <li>Email: {{ hyd.email }}</li>
+                    <li>Phone Number: {{ hyd.phonenumber }}</li>
+                    <li>Title: {{ hyd.title }}</li>
+                    <li>Eligibility: {{ hyd.eligibility }}</li>
+                </ul>
+            {% endfor %}
+        {% else %}
+            <p>No records found</p>
+        {% endif %}
+    {% elif type == 'pune' %}
+    <h1>pune Job Information</h1>
+        {% if pune_list %}
+            {% for pune in pune_list %}
+                <ul>
+                    <li>Date: {{ pune.date }}</li>
+                    <li>Company: {{ pune.company }}</li>
+                    <li>Location: {{ pune.location }}</li>
+                    <li>Email: {{ pune.email }}</li>
+                    <li>Phone Number: {{ pune.phonenumber }}</li>
+                    <li>Title: {{ pune.title }}</li>
+                    <li>Eligibility: {{ pune.eligibility }}</li>
+                </ul>
+            {% endfor %}
+        {% else %}
+            <p>No records found</p>
+        {% endif %}
+    {% elif type == 'bang' %}
+    <h1>bang Job Information</h1>
+        {% if bang_list %}
+            {% for bang in bang_list %}
+                <ul>
+                    <li>Date: {{ bang.date }}</li>
+                    <li>Company: {{ bang.company }}</li>
+                    <li>Location: {{ bang.location }}</li>
+                    <li>Email: {{ bang.email }}</li>
+                    <li>Phone Number: {{ bang.phonenumber }}</li>
+                    <li>Title: {{ bang.title }}</li>
+                    <li>Eligibility: {{ bang.eligibility }}</li>
+                </ul>
+            {% endfor %}
+        {% else %}
+            <p>No records found</p>
+        {% endif %}
+    {% endif %}
+</body>
+</html>
