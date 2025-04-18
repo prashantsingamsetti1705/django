@@ -1,0 +1,21 @@
+CHAPTER-5:Working with Django Forms
+====================================
+Django Forms:
+----------------------
+-->The main purpose of forms is to take user input.
+Ex:
+		loginform, registration form, feedback form ec....
+-->From the forms we can read end user provided input data and we can use that data based on requirement. We can store in the database for future purpose. We may use just for validation/authetication purpose.
+-->Here we have to use django specific forms but not HTML forms.
+
+Advantages of Django Forms over HTML forms:
+-----------------------------------------------------------------------
+1).We can develop forms very easily with python code.
+2).We can develop HTML Form widgets/components (like text area,email,pwd etc)
+very quickly.
+3).Validating data will become very easy.
+4).Processing data into python datastructures like list, set etc will become easy.
+5).Creation of Models nased forms will become easy etc....
+
+model class ---> Converted into database table
+form class ---> Converted into HTML form
