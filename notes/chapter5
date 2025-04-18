@@ -19,3 +19,82 @@ very quickly.
 
 model class ---> Converted into database table
 form class ---> Converted into HTML form
+Process to generate Django Forms:
+-----------------------------------------------------
+django-admin startproject formproject
+py manage.py startapp testapp
+Add app in settings.py
+
+Step1:Creation of forms.py file in our application folder with our required fields.
+forms.py
+-------------
+from django import forms
+class StudentForm(forms.Form):
+    name = forms.CharField()
+    marks = forms.IntegerField()
+
+Note:
+	name and marks are the field names which will be available in HTML form.
+					forms.py======>views.py=======>Template file(HTML)
+
+Step-2:Usage of forms.py inside vews.py file
+-------------------------------------------------------------------
+views.py
+------------
+from testapp.forms import StudentForm
+def student_input_view(request):
+    form = StudentForm()
+    my_dict = {'form':form}
+    return render(request,'testapp/input.html',my_dict)
+
+Step-3:Creation of HTML file to hold form
+-----------------------------------------------------------------
+Inside template file we have to use template tag to inject form {{form}}
+
+input.html
+----------------
+<body>
+    <h1>Student Input Form</h1>
+    <div class="container">
+        <form method="post" align="center">
+           {{form.as_p}}
+            <input type="submit" name="" value="Submit">
+        </form>
+    </div>
+</body>
+
+-->If we submit this form we will get 403 status code response
+Forbidden (403)
+CSRF verification failed. Request aborted.
+
+CSRF(Cross Site Request Forgery) Token:
+---------------------------------------------------------------
+-->Every form should satisfy CSRF verification, otherwise Django won't accept our form.
+-->It is meant for website security. Being a programmer we are not required to worry anything about this.Django will take care everything.
+-->But we have to add csrf_token in our form
+				{{form.as_p}}
+				{% csrf_token %}
+
+How to process input data from the form inside views.py file
+-------------------------------------------------------------------------------------------
+Inside views.py, we have to read data provided by end user and we have to use that data based on our requirement.
+
+	form = StudentForm()--->Empty form object to display form to the end user.
+	form = StudentForm(request.POST)--->This form object contains end user provided data
+		
+cleaned_data ---> dictionary which contains end user provided data.
+form.cleanded_data['name']-->The name entered by end user
+form.cleanded_data['marks']-->The marks entered by end user
+
+form.is_valid() ---> To check whether validations are successful or not
+
+Difference between GET & POST:
+--------------------------------------------------
+There are multiple ways to send GET request:
+	-->Typing URL in the address bar and enter.
+	-->Clicking on hyperlinks
+	-->Submitting the HTML FORM without method attribute
+	-->Submitting the HTML FORM with method attribute of GET value.
+
+There is only one way to send POST request
+	-->Submitting the HTML FORM with method attribute of POST value.
