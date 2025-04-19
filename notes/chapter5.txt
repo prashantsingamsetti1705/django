@@ -98,3 +98,159 @@ There are multiple ways to send GET request:
 
 There is only one way to send POST request
 	-->Submitting the HTML FORM with method attribute of POST value.
+
+DJANGO @ 4:00 PM | Mr.Mahesh [24th March]
+Mr.Mahesh
+Upcoming
+Woohoo, no work due in soon!
+Material
+Mahesh Python posted a new material: 19/4/25(Django Forms)
+Posted 17:42
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 18/4/25(Models)
+Posted Yesterday
+
+django.txt
+Text
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 17/4/25(Models)
+Posted 17 Apr
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 16/4/25(Models)
+Posted 16 Apr
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 15/4/25(Fake Data Generation)
+Posted 15 Apr
+
+django.txt
+Text
+
+Announcement: 'Hi, There is No Class Today [14-04-2025]'
+Naresh Technologies
+Created 14 Apr14 Apr
+Hi,
+
+There is No Class Today [14-04-2025]
+Material
+Mahesh Python posted a new material: 12/14/25(Models)
+Posted 12 Apr
+
+django.txt
+Text
+
+Announcement: 'Hi, There is No Class Today [11-04-2025]'
+Naresh Technologies
+Created 11 Apr11 Apr
+Hi,
+
+There is No Class Today [11-04-2025]
+Material
+Mahesh Python posted a new material: 10/4/25(Models)
+Posted 10 Apr
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 9/4/25(Models)
+Posted 9 Apr
+
+django.txt
+Text
+views.py
+------------
+def student_input_view(request):
+    submitted = False
+    sname = ''
+    if request.method == 'POST':
+        form = StudentForm(request.POST)
+        if form.is_valid():
+            print('Form Validation success and print data')
+            print('RollNo:',form.cleaned_data['rollno'])
+            print('Name:',form.cleaned_data['name'])
+            print('Marks:',form.cleaned_data['marks'])
+            sname = form.cleaned_data['name']
+            submitted = True
+    form = StudentForm()
+    return render(request,'testapp/input.html', {'form':form, 'submitted':submitted, 'sname':sname})
+
+input.html
+-----------------
+<body>
+    <div class="container" align="center">
+        {% if submitted %}
+        <h1>Student with the name:{{sname}} processed successfully</h1>
+        <h2>Enter next student information</h2><hr>
+        {% else %}
+        <h1>Student Input Form</h1>
+        {% endif %}
+        <form method="post" align="center">
+           {{form.as_p}}
+           {% csrf_token %}
+            <input type="submit" name="" value="Submit">
+        </form>
+    </div>
+</body>
+
+feedback project
+--------------------------
+django-admin startproject feedbackproject
+py manage.py startapp testapp
+Add app in settings.py
+
+forms.py
+-------------
+from django import forms
+class FeedBackForm(forms.Form):
+    name = forms.CharField()
+    rollno = forms.IntegerField()
+    email = forms.EmailField()
+    feedback = forms.CharField(widget=forms.Textarea)
+
+views.py
+-------------
+def feedback_view(request):
+    submitted = False
+    name = ''
+    if request.method == 'POST':
+        form = FeedBackForm(request.POST)
+        if form.is_valid():
+            print('Form validation success and printing feedback information')
+            print('*'*55)
+            print('Name:',form.cleaned_data['name'])
+            print('RollNo:',form.cleaned_data['rollno'])
+            print('Mail ID:',form.cleaned_data['email'])
+            print('Feedback:',form.cleaned_data['feedback'])
+            submitted = True
+            name = form.cleaned_data['name']
+    form = FeedBackForm()
+    return render(request,'testapp/feedback.html', {'form':form, 'submitted':submitted,'name':name})
+
+feedback.html
+----------------------
+<body>
+    <div class="container" align="center">
+        {% if submitted %}
+        <h1>Hello {{name}}, Thanks for providing feedback,
+		it is very helpful for us to provide better service</h1>
+        {% else %}
+        <h1>Student Feedback Form</h1>
+        <form method="post">
+            {{form.as_p}}
+            {% csrf_token %}
+            <input type="submit" value="SubmitFeedback">
+        </form>
+        {% endif %}
+    </div>
+</body>
