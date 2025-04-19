@@ -1,0 +1,12 @@
+body{
+margin:5px;
+background-color:blue;
+padding:20px;
+}
+h1{
+   color:red; 
+   text-align:center;
+}
+.container{
+    text-align:center;
+}
