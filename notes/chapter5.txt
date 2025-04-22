@@ -254,3 +254,196 @@ feedback.html
         {% endif %}
     </div>
 </body>
+
+
+DJANGO @ 4:00 PM | Mr.Mahesh [24th March]
+Mr.Mahesh
+Upcoming
+Woohoo, no work due in soon!
+Material
+Mahesh Python posted a new material: 22/4/25(Form Validations)
+Posted 17:36
+
+django.txt
+Text
+
+Announcement: 'Dear Students Today No Class'
+Naresh Technologies
+Created YesterdayYesterday
+Dear Students 
+
+Today No Class
+Material
+Mahesh Python posted a new material: 19/4/25(Django Forms)
+Posted 19 Apr
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 18/4/25(Models)
+Posted 18 Apr
+
+django.txt
+Text
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 17/4/25(Models)
+Posted 17 Apr
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 16/4/25(Models)
+Posted 16 Apr
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 15/4/25(Fake Data Generation)
+Posted 15 Apr
+
+django.txt
+Text
+
+Announcement: 'Hi, There is No Class Today [14-04-2025]'
+Naresh Technologies
+Created 14 Apr14 Apr
+Hi,
+
+There is No Class Today [14-04-2025]
+Material
+Mahesh Python posted a new material: 12/14/25(Models)
+Posted 12 Apr
+
+django.txt
+Text
+
+Announcement: 'Hi, There is No Class Today [11-04-2025]'
+Naresh Technologies
+Created 11 Apr11 Apr
+Hi,
+
+There is No Class Today [11-04-2025]
+Stream
+Form Validatons:
+--------------------------
+-->We can implement validation ogic by using 2-ways
+	1.Explicitly by the programmer by using clean methods
+	2.By using django in-built validators
+
+Basic OOP's knowledge
+-----------------------------------
+class Parent:
+	def __init__(self):
+		self.x = 333
+	def property(self):
+		print('gold + land + cash')
+class Child(Parent):
+	def education(self):
+		print('B-Tech qualification + Job')
+c = Child()
+c.education()
+c.property()
+print(c.x)
+
+Ex:
+-----
+class Form:
+	def __init__(self):
+		self.cleaned_data = {'name':'mahesh'}
+class FeedBackForm(forms.Form):
+    name = forms.CharField()
+    rollno = forms.IntegerField()
+    email = forms.EmailField()
+    feedback = forms.CharField(widget=forms.Textarea)
+
+form = FeedBackForm()
+form.cleaned_data['name']
+
+Ex:
+-----
+class Parent:
+	def property(self):
+		print('gold + land + cash + power')
+	def marry(self):
+		print('Appalamma')
+class Child(Parent):
+	def marry(self):
+		super().marry()
+		print('Katrina Kaif')
+c = Child()
+c.property()
+c.marry()
+
+1.Explicitly by the programmer by using clean methods
+------------------------------------------------------------------------------------
+Syn:	clean_fieldname(self)
+
+-->In the Form class, for any field, if we define clean method, then at the time of submit this form, django will call this methods automatically to perform validations. If clean method wont raise any error then only request will be processed.
+
+forms.py
+-------------
+class FeedBackForm(forms.Form):
+    All fields
+    
+	def clean_name(self):
+        print('Validaning Name Field')
+        input_name = self.cleaned_data['name']
+        if len(input_name) < 4:
+            raise forms.ValidationError('The minimum number of characters in the name filed should be 4')
+        return input_name
+	def clean_rollno(self):
+        print('Validating RollNo Field')
+        input_rollno = self.cleaned_data['rollno']
+        return input_rollno
+    def clean_email(self):
+        print('Validating Email Field')
+        input_email = self.cleaned_data['email']
+        return input_email
+    def clean_feedback(self):
+        print('Validating Feedback Field')
+        input_feedback = self.cleaned_data['feedback']
+        return input_feedback
+		
+Note:
+	Django will call these field level clean methods automatically and we are not required to call these methods explicitly. The names are fixed because these are understandable by Django.
+
+2).By using django in-built validators:
+---------------------------------------------------------
+-->Django provides several in-built validators to perform very common validations. We can use directly and we are not responsible to implement those. 
+All inbuilt validators present in django.core module.
+
+forms.py
+-------------
+from django.core import validators
+class FeedBackForm(forms.Form):
+	--------
+	feedback = forms.CharField(widget=forms.Textarea,validators=[
+	validators.MaxLengthValidator(40),validators.MinLengthValidator(10)])
+
+How to implement custom validators by using same validators parameter?
+----------------------------------------------------------------------------------------------------------------
+The name should be starts with 's'
+----------------------------------------------------
+def starts_with_s(value):
+    print('starts_with_s function execution')
+    if value[0].lower() != 's':
+        raise forms.ValidationError('Name should be starts with s or S')
+
+class FeedBackForm(forms.Form):
+    name = forms.CharField(validators=[starts_with_s])
+
+mail should contains @gmail.com
+---------------------------------------------------
+mail = 'mahesh@gmail.com'
+print(mail[-10:])
+
+def gmail_validation(value):
+    print('Checking for gmail validation')
+    if value[-10:] != '@gmail.com':
+        raise forms.ValidationError('Mail extension should be gmail')
+
+class FeedBackForm(forms.Form):
+    email = forms.EmailField(validators=[gmail_validation])
