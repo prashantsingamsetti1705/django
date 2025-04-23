@@ -447,3 +447,63 @@ def gmail_validation(value):
 
 class FeedBackForm(forms.Form):
     email = forms.EmailField(validators=[gmail_validation])
+Validating of total form directly by using single clean() method:
+------------------------------------------------------------------------------------------------
+We are not required to write separate field level methods. Inside single clean() method all validations we can perform.
+
+    def clean(self):
+        print('Total Form Validations......')
+        total_cleaned_data = super().clean()
+        print('Validating Name')
+        input_name = total_cleaned_data['name']
+        if input_name[0].lower() != 's':
+            raise forms.ValidationError('Name should be starts with s')
+        print('Validating Rollno')
+        input_rollno = total_cleaned_data['rollno']
+        if input_rollno <= 0:
+            raise forms.ValidationError('Rollno should be > 0')
+        print('Validating Email')
+        input_email = total_cleaned_data['email']
+        if input_email[-10:] != '@gmail.com':
+            raise forms.ValidationError('Email extension should be gmail')
+
+-->If we want to validate multiple field values together, then single clean() method is the best choice.
+
+How to check original pwd and re-entered pwd are same or not?
+------------------------------------------------------------------------------------------------
+class FeedBackForm(forms.Form):
+    password = forms.CharField(label="Enter Password",widget=forms.PasswordInput)
+    rpassword=forms.CharField(label="Password(Again)",widget=forms.PasswordInput)
+
+    def clean(self):
+        total_cleaned_data = super().clean()
+        pwd = total_cleaned_data['password']
+        rpwd = total_cleaned_data['rpassword']
+        if pwd != rpwd:
+            raise forms.ValidationError('Both passwords must be same.....')
+
+How to prevent request from BOT:
+----------------------------------------------------
+-->Generally form requests can be send by end user. Sometimes we can write automated programming script which is responsible to fill the form and submit. This automated programming script is nothing but BOT.
+
+The main objectives of BOT requests are:
+	1).To create unneccessary heavy traffic to the website, which may crash our application.
+	2).To spread malware(viruses)
+
+-->Being a developer compulsory we have to think about BOT requests ad we have to prevent this requests.
+
+How to prevent BOT request:
+--------------------------------------------
+-->In the form we will place one hidden field, which is not visible to the end user, Hence there is no chance of providing value to this hidden field.
+-->But BOT will send the value for this hidden field also. If hidden field got some value means it is the request from BOT and prevent that submission.
+
+forms.py
+-------------
+class FeedBackForm(forms.Form):
+    bot_handler = forms.CharField(required=False,widget=forms.HiddenInput)
+
+    def clean(self):
+        total_cleaned_data = super().clean()
+        bot_handler_value = total_cleaned_data['bot_handler']
+        if len(bot_handler_value) > 0:
+            raise forms.ValidationError("Request from BOT.....can't be submitted")
