@@ -15,7 +15,7 @@ def student_input_view(request):
             submitted=True
     else:
         form=StudentForm()
-    my_dict={'form':form,'sname':sname}
+    my_dict={'form':form,'sname':sname,'submitted':submitted}
     return render(
         request,'testapp/index.html',context=my_dict,)
 # Create your views here.
