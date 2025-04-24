@@ -1,0 +1,104 @@
+Working with Model Foms:
+========================
+Model Form====>Model Based Form
+
+Read each field value
+name = form.cleaned_data['name']
+marks = form.cleaned_data['marks']
+
+records = Student.get_or_create(name=name,marks=marks)
+
+10-fields are there
+100-fields 
+
+Model based form
+only one line
+form.save()
+
+-->Sometimes we can create form based on Model, such type of forms are called as model based forms or Model Forms.
+-->The main advantage of model forms are we can grab end user input data and we can save that data very easily in the database.
+							form.save()
+							form.save(commit=True)
+
+How to develop model based form:
+----------------------------------------------------
+1.While developing form class. We have to inherit from ModelForm class instead of normal Form class.
+			class StudentForm(froms.Form):
+			class StudentForm(forms.ModelForm):
+
+2.class StudentForm(forms.ModelForm):
+	class Meta:
+		model = Student 
+		fields = '__all__'
+
+Case-1:Instead of all fields, if we required particular fields
+		fields = ('field1','field2','field3')
+
+Case-2:Instead of all fields, if we want to exclude certain fields.
+		exclude = ['field1','field2']
+
+ModelFormProject:
+=================
+django-admin startproject modelformproject
+py manage.py startapp testapp
+Add app in settings.py
+
+models.py
+----------------
+class Student(models.Model):
+    name = models.CharField(max_length=30)
+    marks = models.IntegerField()
+
+-->makemigrations and migrate
+
+admin.py
+--------------
+from testapp.models import Student
+class StudentAdmin(admin.ModelAdmin):
+    list_display = ['name','marks']
+admin.site.register(Student,StudentAdmin)
+
+-->create super user
+
+forms.py
+-------------
+from django import forms
+from testapp.models import Student
+class StudentForm(forms.ModelForm):
+    name = forms.CharField()
+    marks = forms.IntegerField()
+    class Meta:
+        model = Student
+        fields = '__all__'
+
+views.py
+------------
+from testapp.forms import StudentForm
+def student_view(request):
+    form = StudentForm()
+    return render(request,'testapp/studentform.html',{'form':form})
+
+studentform.html
+---------------------------
+<body>
+    <div class="container" align="center">
+        <h1>Student Registration Form</h1>
+        <form method="post">
+            {{form.as_p}}
+            {% csrf_token %}
+            <input type="submit" class="btn btn-success" value="Register">
+        </form>
+    </div>
+</body>
+
+views.py
+-------------
+def student_view(request):
+    if request.method == 'POST':
+        form = StudentForm(request.POST)
+        if form.is_valid():
+            form.save(commit=True)
+            print('Record inserted into DB successfully.....')
+    form = StudentForm()
+    return render(request,'testapp/studentform.html',{'form':form})
+
