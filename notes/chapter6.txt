@@ -102,3 +102,145 @@ def student_view(request):
     form = StudentForm()
     return render(request,'testapp/studentform.html',{'form':form})
 
+
+28/4/25(Model Form)
+Mahesh Python
+•
+17:35
+
+django.txt
+Text
+Class comments
+MovieProject:
+============
+django-admin startproject movieproject
+py manage.py startapp testapp
+Add app in settings.py
+
+models.py
+----------------
+class Movie(models.Model):
+    rdate = models.DateField()
+    moviename = models.CharField(max_length=30)
+    hero = models.CharField(max_length=30)
+    heroine = models.CharField(max_length=30)
+    rating = models.IntegerField()
+
+-->py manage.py makemigrations
+-->py manage.py migrate
+
+admin.py
+--------------
+from testapp.models import Movie
+class MovieAdmin(admin.ModelAdmin):
+    list_display = ['rdate','moviename','hero','heroine','rating']
+admin.site.register(Movie,MovieAdmin)
+
+-->create super user.
+
+views.py
+-------------
+def index_view(request):
+    return render(request,'testapp/index.html')
+
+urls.py
+----------
+path('', views.index_view),
+
+index.html
+----------------
+<body>
+    <div class="container" align="center">
+        <h1>Sunny Movies.......</h1>
+        <p>Upto date movies information</p>
+        <a class="btn btn-primary" href="#">ADD</a>
+        <a class="btn btn-primary" href="#">List Movies</a>
+    </div>
+</body>
+
+views.py
+-------------
+from testapp.models import Movie
+def list_movies_view(request):
+    movies_list = Movie.objects.all()
+    return render(request,'testapp/listmovies.html',{'movies_list':movies_list})
+
+listmovies.html
+------------------------
+<body>
+    {% if movies_list %}
+<table border="3">
+    <thead>
+        <th>Release Date</th>
+        <th>Movie Name</th>
+        <th>Hero</th>
+        <th>Heroine</th>
+        <th>Rating</th>
+    </thead>
+    {% for movie in movies_list %}
+    <tr>
+        <td>{{movie.rdate}}</td>
+        <td>{{movie.moviename}}</td>
+        <td>{{movie.hero}}</td>
+        <td>{{movie.heroine}}</td>
+        <td>{{movie.rating}}</td>
+    </tr>
+    {% endfor %}
+</table>
+{% else %}
+<h1>No Movies Found</h1>
+{% endif %}
+</body>
+
+urls.py:
+	path('movieslist', views.list_movies_view)
+
+index.html
+-----------------
+<a class="btn btn-primary" href="/movieslist">List Movies</a>
+
+forms.py
+-------------
+from django import forms
+from testapp.models import Movie
+class MovieForm(forms.ModelForm):
+    class Meta:
+        model = Movie
+        fields = '__all__'
+
+views.py
+------------
+from testapp.forms import MovieForm
+def add_movie_view(request):
+    form = MovieForm()
+    return render(request,'testapp/addmovie.html',{'form':form})
+
+addmovie.html
+-----------------------
+<body>
+<div class="container" align="center">
+    <h1>Add Movie Information</h1>
+    <form action="" method="post">
+        {{form.as_p}}
+        {% csrf_token %}
+        <input class="btn btn-success" type="submit" value="Add Movie">
+    </form>
+</div>
+</body>
+
+views.py
+-------------
+def add_movie_view(request):
+    form = MovieForm()
+    if request.method == 'POST':
+        form = MovieForm(request.POST)
+        if form.is_valid():
+            form.save(commit=True)
+            return index_view(request)
+    return render(request,'testapp/addmovie.html',{'form':form})
+
+urls.py:
+	path('addmovie/',views.add_movie_view)
+
+index.html:
+	<a class="btn btn-primary" href="/addmovie">ADD</a>
