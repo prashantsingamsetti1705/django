@@ -1,0 +1,123 @@
+CHAPTER-7:Working with Advanced Templates
+-----------------------------------------------------------------------
+1).Template Inheritance
+2).Template Filters
+
+1).Template Inheritance
+-------------------------------------
+-->If multiple template files have some common code, it is not recommended to write that common code in every template HTML file. It increases length of the code and reduces readability. It is also increase the development time.
+-->We have to separate that common code into a new template file, which is also known as base template. The remaining template files should required to extends base templates so that the common code will inherited automatically.
+-->Inheriting common code from base template to remaining templates is nothing but template inheritance.
+
+How to implement template inheritance?
+--------------------------------------------------------------
+base.html
+---------------
+<body>
+			common code required for every child template
+			{% block child_block %}
+				Anything outside of this block available to child tag
+				In child template the specific code should be in this block
+			{% endblock %}
+</body>
+
+child.html
+----------------
+<!DOCTYPE html>
+{% extends 'testapp/base.html' %}
+{% block child_block %}
+				child specific code
+{% endblock %}
+
+Ex:
+-----
+django-admin startproject advtemplateproject
+py manage.py startapp testapp
+Add app in settings.py
+
+views.py
+-------------
+def base_view(request):
+    return render(request,'testapp/base.html')
+
+base.html
+---------------
+<body>
+    <nav class="navbar">
+        <a class="navbar" href="#">Mahesh News</a>
+        <div class="container">
+            <ul class="navbar-nav">
+                <li><a class="navbar" href="#">Movies</a></li>
+                <li><a class="navbar" href="#">Sports</a></li>
+                <li><a class="navbar" href="#">Politics</a></li>
+            </ul>
+        </div>
+    </nav>
+            {% block body_block %}
+            {% endblock %}
+</body>
+
+urls.py
+-----------
+path('', views.base_view)
+
+views.py
+-------------
+def movie_view(request):
+    return render(request, 'testapp/movie.html')
+
+movie.html
+-----------------
+<!DOCTYPE html>
+{% extends 'testapp/base.html' %}
+{% block body_block %}
+	<h1>This is movies information</h1>
+{% endblock %}
+
+urls.py:
+	path('movies/',views.movie_view)
+
+views.py
+-------------
+def sports_view(request):
+    return render(request, 'testapp/sports.html')
+
+sports.html
+------------------
+<!DOCTYPE html>
+{% extends 'testapp/base.html' %}
+{% block body_block %}
+	<h1>This is sports information</h1>
+{% endblock %}
+
+urls.py:
+	path('sports/',views.sports_view)
+
+views.py
+-------------
+def politics_view(request):
+    return render(request, 'testapp/politics.html')
+
+politics.html
+--------------------
+<!DOCTYPE html>
+{% extends 'testapp/base.html' %}
+{% block body_block %}
+	<h1>This is politics information</h1>
+{% endblock %}
+
+urls.py:
+	path('politics/',views.politics_view)
+
+Note:
+--------
+1).In the parent template, we can define any number of blocks. But child template is responsible to implement these blocks.
+2).It is not mandatory to implement every parent block in child. Based on requirement, child template can decide which blocks are required to implement.
+3).While implementing blocks in child template, it is not required to follow order.
+
+Advantages of Template Inheritance:
+--------------------------------------------------------
+1).Whatever code available in the base template is bydefault available to the child templates and we are not required to write again. Hence it promotes re-usability.
+2).It reduces length of the code ad improves readability.
+3).It reduces development time.
+4).It provides unique and same look and feel for total web application.
