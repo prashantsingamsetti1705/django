@@ -121,3 +121,121 @@ Advantages of Template Inheritance:
 2).It reduces length of the code ad improves readability.
 3).It reduces development time.
 4).It provides unique and same look and feel for total web application.
+Template Filters:
+------------------------
+-->In the template file, the injected data can be displayed by using template tags.
+			{{name}}						{{emp.eno}}
+-->Before displaying to the end user, if we want to perform some modifications to the injected text, like add something, case conversions or cut someting etc... then we should go for filter.
+
+Syn for Template filter:
+------------------------------------
+{{value | filtername}}
+{{value | filtername:'argument'}}
+-->Args to the filter are optional.
+
+Ex:
+----
+django-admin startproject filterproject
+py manage.py startapp testapp
+Add application in settings.py
+
+models.py
+---------------
+class FilterModel(models.Model):
+    name = models.CharField(max_length=30)
+    subject = models.CharField(max_length=30)
+    dept = models.CharField(max_length=30)
+    date = models.DateField()
+
+-->py manage.py makemigrations
+-->py manage.py migrate
+
+admin.py
+--------------
+from testapp.models import FilterModel
+class FilterModelAdmin(admin.ModelAdmin):
+    list_display = ['name','subject','dept','date']
+admin.site.register(FilterModel,FilterModelAdmin)
+
+-->create super user
+
+views.py
+-------------
+from testapp.models import FilterModel
+def data_view(request):
+    records = FilterModel.objects.all()
+    return render(request,'testapp/data.html',{'records':records})
+
+data.html
+---------------
+<body>
+    {% for record in records %}
+        <h1>{{record.name}} Information</h1>
+    <ul>
+        <li>Name:{{record.name}}</li>
+        <li>Subject:{{record.subject}}</li>
+        <li>Dept:{{record.dept}}</li>
+        <li>Date:{{record.date}}</li>
+    </ul><hr>
+    {% endfor %}
+</body>
+
+urls.py:
+	path('data/',views.data_view)
+
+fp.css
+---------
+li{
+    font-size:20px;
+}
+body{
+    background:red;
+    color:white;
+}
+
+filters
+---------
+	<ul>
+        <li>Name:{{record.name | upper}}</li>
+        <li>Subject:{{record.subject | lower}}</li>
+        <li>Dept:{{record.dept | title}}</li>
+    </ul>
+
+<li>Date:{{record.date | date:'d-m-Y'}}</li>
+<li>Date:{{record.date | date:'m-d-Y'}}</li>
+<li>Date:{{record.date | date:'m/d/Y'}}</li>
+<li>Date:{{record.date | timesince}}</li>
+<li>Date:{{record.date | date:'d-b-Y'}}</li>
+<li>Date:{{record.date | date:'l, F j, Y'}}</li>
+
+How to create our own filters:
+---------------------------------------------
+Based on our requirement, we can create oen filters, if predefined filters are not fullfill our requirements.
+
+Steps:
+---------
+1).Create a folder 'templatetags' in our application folder.
+2).Create a special file named with __init__.py inside this folder(templatestag), so that django will consider this folder as python package.
+3).Create a python file inside this folder to define our filters cust_filters.py
+
+cust_filters.py
+----------------------
+from django import template
+register = template.Library()
+def first_five_upper(value):
+    result = value[:3].upper()
+    return result
+def first_n_upper(value,n):
+    result = value[:n].upper()
+    return result
+register.filter('ffu',first_five_upper)
+register.filter('fnu',first_n_upper)
+
+In html file
+-----------------
+<body>
+		{% load cust_filters %}
+		<li>Name:{{record.name | fnu:6}}</li>
+
+CHAPTER-8:Session Management
+==============================
