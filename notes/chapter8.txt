@@ -1,0 +1,104 @@
+CHAPTER-8:Session Management
+---------------------------------------------------
+-->Client and Server can communicate with some common language which is nothing but HTTP.
+-->The basic limitation of HTTP is it is a stateless protocol. i.e it is unable to remember client information for future purpose across multiple requests. Every request to the server is treated as new request only.
+-->To remember client information at server side, some special mechanism must be required which is nothing but session management mechanism.
+
+Different session management mechanisms are:
+					1).Cookies
+					2).Session API
+
+Session management by using Cookies:
+------------------------------------------------------------
+-->Cookies is a very small amunt of information created by server and maintained by client. Cookies are key-value pairs.
+		RMP Doctor example
+
+To add cookies to the response:
+	response.set_cookie(cname,value)
+
+To get cookies send by client:
+	request.COOKIES[cname]
+	request.COOKIES.get(cname)
+	request.COOKIES.get(cname,defaultvalue)
+
+Ex:Page Count Application
+-----------------------------------------
+django-admin startproject pagecountproject
+py manage.py startapp testapp
+Add app in settings.py
+
+views.py
+-------------
+def page_count_view(request):
+    print('Cookies from the client:',request.COOKIES)
+    count = int(request.COOKIES.get('count',0))
+    count += 1
+    response =  render(request,'testapp/counter.html',{'count':count})
+    response.set_cookie('count',count)
+    return response
+
+counter.html
+--------------------
+<body>
+    <h1>The Page Count:<span>{{count}}</span></h1>
+</body>
+
+Client is sending the first request:
+---------------------------------------------------
+-->What information required for future purpose, server will decide, with that information, server will create cookie and it should be handover to the client. Response will be send to client.
+-->Server will add cookie to the response then automatically cookie will be reached to the client.
+
+sessionproject2:
+------------------------
+django-admin startproject sessionproject2
+py manage.py startapp testapp
+Add app in settings.py
+
+forms.py
+-------------
+from django import forms
+class LoginForm(forms.Form):
+    name = forms.CharField()
+
+views.py
+------------
+from testapp.forms import LoginForm
+def home_view(request):
+    form = LoginForm()
+    return render(request,'testapp/home.html',{'form':form})
+
+home.html
+-----------------
+<body>
+    <h1>Welcome To Naresh IT</h1>
+    <form action="" >
+        {{form.as_p}}
+        {% csrf_token %}
+        <input type="submit" value="Enter Name">
+    </form>
+</body>
+
+urls.py:
+	path('home/',views.home_view)
+
+views.py
+-------------
+def date_time_view(request):
+    name = request.GET['name']
+    respnse = render(request,'testapp/datetime.html',{'name':name})
+    respnse.set_cookie('name',name)
+    return respnse
+
+datetime.html
+----------------------
+<body>
+  <h1>Hello {{name}}</h1>
+  <a href="#">Click Here To Get The Date & Time</a>
+</body>
+
+urls.py:
+	path('second/',views.date_time_view)
+
+home.html
+-----------------
+<form action="/second" >
