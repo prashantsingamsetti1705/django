@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% load cust_filters %}
+    {% for val in record %}
+    <h1>{{val.name}}</h1>
+    <ul>
+        <li>{{val.subject|title}}</li>
+        <li>{{val.dept|lower}}</li>
+        <li>{{val.date|date:'w/b/y'}}</li>
+    </ul>
+    {% endfor %}
+</body>
+</html>
