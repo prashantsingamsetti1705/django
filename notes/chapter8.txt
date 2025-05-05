@@ -228,3 +228,121 @@ results.html
 
 urls.py:
 	path('results/',views.result_view)
+
+Temporary vs Permanent cookies:
+---------------------------------------------------
+If we are not setting max_age for the cookies, then the cookies will be stored in browsers cache. Once we close the browser, automatically the cookies will be expired. Such type of cookies are called as temporary cookies.
+
+We can create temporary cookies:
+	response.set_cookies(name,value)
+
+If we set the max_age for the cookies, then cookies will be stored in local file system permanently. Once the specified max_age expired then only cookies will be expired-->Permanent cookies or Persistent cookies.
+
+We can create permanent cookies:
+	response.set_cookies(name,value,120)
+
+sessionproject-4:
+-------------------------
+django-admin startproject sessionproject4
+py manage.py startapp testapp
+Add app in settings.py
+makemigrations and migrate
+
+views.py
+-------------
+def index_view(request):
+    return render(request,'testapp/home.html')
+
+home.html
+-----------------
+<body>
+  <div class="container">
+    <div class="jumbotron" align="center">
+      <h1>MAHESH ONLINE SHOPPING APP</h1>
+      <a class="btn btn-primary" href="#">ADD Item</a>
+      <a class="btn btn-primary" href="#">Display Items</a>
+    </div>
+  </div>
+</body>
+
+urls.py:
+	path('',views.index_view)
+
+forms.py
+-------------
+from django import forms
+class AddItemForm(forms.Form):
+    itemname = forms.CharField()
+    quantity = forms.IntegerField()
+
+views.py
+------------
+from testapp.forms import AddItemForm
+def additem_view(request):
+    form = AddItemForm()
+    response = render(request,'testapp/additem.html',{'form':form})
+    if request.method == 'POST':
+        form = AddItemForm(request.POST)
+        if form.is_valid():
+            name = form.cleaned_data['itemname']
+            quantity = form.cleaned_data['quantity']
+            response.set_cookies(name,quantity)
+    return response
+
+additem.html
+--------------------
+<body>
+  <div class="container" align="center">
+    <h1>Add Item Form</h1>
+    <form method="post">
+      {{form.as_p}}
+      {% csrf_token %}
+      <input type="submit" value="Add Item">
+    </form>
+  </div>
+</body>
+
+urls.py:
+	path('additem/',views.additem_view)
+
+views.py
+-------------
+def display_items_view(request):
+    return render(request,'testapp/displayitems.html')
+
+displayitems.html
+---------------------------
+<body>
+    <h1>Shopping Cart Items</h1>
+    {% if request.COOKIES %}
+        <table border="3">
+            <thead>
+                <th>Item Name</th>
+                <th>Quantity</th>
+            </thead>
+        {% for key,value in request.COOKIES.items %}
+        {% if key != 'csrftoken' %}
+            <tr>
+                <td>{{key}}</td>
+                <td>{{value}}</td>
+            </tr>
+        {% endif %}
+        {% endfor %}
+        </table>
+    {% else %}
+    <p>No items in the shopping cart</p>
+    {% endif %}
+</body>
+
+urls.py
+-----------
+	path('display/', views.display_items_view),
+
+Limitations of Cookies:
+-----------------------------------
+1).By using cookies we can store very less amount of information. The size of cookies is fixed. Hence if we want to store huge amount of information then cookies is not bes choice.
+2).Cookies information is stored on client side and hence there is no security.
+3).Every time with every request, browser will send all cookies related to that application, which creates network traffic problems.
+4).There is a limit of max number of cookies supported by browser.
+
+		To overcome these limitations, we should go for Session Framework.
