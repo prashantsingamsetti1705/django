@@ -346,3 +346,175 @@ Limitations of Cookies:
 4).There is a limit of max number of cookies supported by browser.
 
 		To overcome these limitations, we should go for Session Framework.
+
+Session management by using session API(Django Session Framewrk)
+---------------------------------------------------------------------------------------------------------
+Cookies--->RMP Doctor
+Session Framework--->Bank Locker--->Super speciality hospital
+
+Useful methods in session management:
+-------------------------------------------------------------
+1).To add data to session:
+		request.session['key'] = value
+
+2).To get the value from the session
+		value = request.session['key']
+
+3).request.session.set_expiry(seconds)
+		set expiry time for the session
+
+4).request.session.get_expiry_age()
+		Returns expiry age in seconds seconds(the number of seconds until this session expires)
+
+5).request.session.get_expiry_date()
+		Returns the date on which session will be expired.
+
+sessionproject-5
+------------------------
+django-admin startproject sessionproject5
+py manage.py startapp testapp
+Add app in settings.py
+makemigrations and migrate
+
+views.py
+-------------
+def page_count_view(request):
+    print(request.COOKIES)
+    count = request.session.get('count',0)
+    count += 1
+    request.session['count'] = count
+    request.session.set_expiry(120)
+    print(request.session.get_expiry_age())
+    print(request.session.get_expiry_date())
+    return render(request,'testapp/page.html',{'count':count})
+
+page.html
+----------------
+<body>
+    <h1>The page count:<span>{{count}}</span></h1>
+</body>
+
+urls.py:
+	path('page/',views.page_count_view)
+
+Note:
+	1).request.session.set_expiry(120)-->2 mins session will expires
+	2).request.session.set_expiry(0)-->Once we close the browser automatically session will be expired.
+
+sessionproject-6:
+--------------------------
+Profile Application:
+-----------------------------
+django-admin startproject sessionproject6
+py manage.py startapp testapp
+Add app in settings.py
+makemigrations and migrate
+
+forms.py
+-------------
+from django import forms
+class NameForm(forms.Form):
+    name = forms.CharField()
+
+views.py
+------------
+from testapp.forms import NameForm
+def name_view(request):
+    form = NameForm()
+    return render(request,'testapp/name.html',{'form':form})
+
+name.html
+----------------
+<body>
+  <h1>Name Registration Form</h1>
+  <form action="">
+      {{form.as_p}}
+      {% csrf_token %}
+      <input type="submit" value="Submit Name">
+  </form>
+</body>
+
+urls.py:
+	path('name/',views.name_view)
+
+forms.py
+------------
+class AgeForm(forms.Form):
+    age = forms.IntegerField()
+
+views.py
+------------
+def age_view(request):
+    name = request.GET['name']
+    request.session['name'] = name
+    form = AgeForm()
+    return render(request,'testapp/age.html',{'form':form,'name':name})
+
+age.html
+-------------
+<body>
+  <h1>Hello {{name}}, Provide Age</h1>
+  <form action="">
+      {{form.as_p}}
+      {% csrf_token %}
+      <input type="submit" value="Submit Age">
+  </form>
+</body>
+
+urls.py:
+	path('age/',views.age_view)
+
+forms.py
+-------------
+class GfForm(forms.Form):
+    gf = forms.CharField()
+
+views.py
+-------------
+def gf_view(request):
+    age = request.GET['age']
+    request.session['age'] = age
+    name = request.session['name']
+    form = GfForm()
+    return render(request, 'testapp/gf.html', {'form': form, 'name': name})
+
+gf.html
+-----------
+<body>
+  <h1>Hello {{name}}, Provide GF Name</h1>
+  <form action="">
+      {{form.as_p}}
+      {% csrf_token %}
+      <input type="submit" value="Submit GF Name">
+  </form>
+</body>
+
+urls.py:
+	path('gf/',views.gf_view)
+
+views.py
+-------------
+def results_view(request):
+    gf = request.GET['gf']
+    request.session['gf'] = gf
+    name = request.session['name']
+    age = request.session['age']
+    return render(request,'testapp/results.html')
+
+results.html
+------------------
+<body>
+    {% if request.session %}
+    <h1>Thanks for providing information...Please confirm once</h1>
+    <ul>
+        {% for key,value in request.session.items %}
+        <li>{{key | upper}}:{{value | title}}</li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <h1>No information available</h1>
+    {% endif %}
+</body>
+
+urls.py:
+	path('path/',views.results_view)
