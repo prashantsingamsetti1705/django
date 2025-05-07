@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    {% if request.session %}
+    <h1>thanks for providing your infromation</h1>
+    {% for key,val in request.session.items %}
+    <ul>
+        <li>{{key}}:{{val}}</li>
+    </ul>
+    {% endfor %}
+    {% endif %}
+</body>
+</html>
