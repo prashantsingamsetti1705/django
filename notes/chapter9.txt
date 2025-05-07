@@ -1,0 +1,245 @@
+
+DJANGO @ 4:00 PM | Mr.Mahesh [24th March]
+Mr.Mahesh
+Upcoming
+Woohoo, no work due in soon!
+Material
+Mahesh Python posted a new material: 7/5/25(Authentication & Authorization)
+Posted 17:32
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 6/5/25(Session Management)
+Posted Yesterday
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 5/5/25(Session Management)
+Posted 5 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 2/5/25(Session Management)
+Posted 2 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 1/5/25(Session Management)
+Posted 1 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 30/4/25(Template Filters)
+Posted 30 Apr
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 29/4/25(Template Inheritance)
+Posted 29 Apr
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 28/4/25(Model Form)
+Posted 28 Apr
+
+django.txt
+Text
+
+Announcement: 'Hi, There is No Class Today [26-04-2025]'
+Naresh Technologies
+Created 26 Apr26 Apr
+Hi,
+
+There is No Class Today [26-04-2025]
+
+Announcement: 'Hi, There is No Class Today [25-04-2025]'
+Naresh Technologies
+Created 25 Apr25 Apr
+Hi,
+
+There is No Class Today [25-04-2025]
+CHAPTER-9:User Authentication and Authorization
+==============================================
+1).Authentication:The process of validating user.
+2).Authorization:The process of validating access permission of a user.
+
+auth application
+-------------------------
+1).django.contrib.auth
+2).django.contrib.contenttypes
+
+Demo application for Authentication
+--------------------------------------------------------
+django-admin startproject authproject
+py manage.py startapp testapp
+Add app in settings.py
+
+base.html
+---------------
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+      <div class="container">
+        <a class="navbar-brand" href="/">MAHESHEXAMS</a>
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item active">
+            <a class="nav-link" href="/">Home <span class="sr-only"></span></a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Java Exams</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Python Exams</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Aptitude Exams</a>
+          </li>
+        </ul>
+        <ul class="navbar-nav ml-auto">
+          <li class="nav-item">
+            <a class="nav-link" href="#">Signup</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Login</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="#">Logout</a>
+          </li>
+          </ul>
+      </div>
+    </nav>
+      {% block body_block %}
+      {% endblock %}
+  </body>
+
+views.py
+-----------
+def home_page_view(request):
+    return render(request,'testapp/home.html')
+
+home.html
+-----------------
+<!DOCTYPE html>
+{% extends 'testapp/base.html' %}
+{% block body_block %}
+<div class="jumbotron">
+    <div class="container">
+        <h1>Welcome To MAHESH EXAMS</h1>
+        <h2>Rules:</h2>
+        <ul>
+            <li>Rule-1:You should write only one exam per day</li>
+        </ul>
+    </div>
+</div>
+{% endblock %}
+
+urls.py: path('',views.home_page_view)
+
+views.py
+-------------
+def java_page_view(request):
+    return render(request,'testapp/javaexams.html')
+
+javaexams.html
+------------------------
+<!DOCTYPE html>
+{% extends 'testapp/base.html' %}
+{% block body_block %}
+<div class="jumbotron">
+    <div class="container" align="center">
+        <h1>Welcome To Java Exams</h1>
+    </div>
+</div>
+{% endblock %}
+
+urls.py: path('java/',views.java_page_view)
+
+views.py
+-------------
+def python_page_view(request):
+    return render(request,'testapp/pythonexams.html')
+
+pythonexams.html
+-----------------------------
+<!DOCTYPE html>
+{% extends 'testapp/base.html' %}
+{% block body_block %}
+<div class="jumbotron">
+    <div class="container" align="center">
+        <h1>Welcome To Python Exams</h1>
+    </div>
+</div>
+{% endblock %}
+
+urls.py: path('python/',views.python_page_view)
+
+views.py
+------------
+def aptitude_page_view(request):
+    return render(request,'testapp/aptitudeexams.html')
+
+aptitudeexams.html
+-------------------------------
+<!DOCTYPE html>
+{% extends 'testapp/base.html' %}
+{% block body_block %}
+<div class="jumbotron">
+    <div class="container" align="center">
+        <h1>Welcome To Aptitude Exams</h1>
+    </div>
+</div>
+{% endblock %}
+
+urls.py: path('aptitude/',views.aptitude_page_view)
+
+views.py
+-------------
+from django.contrib.auth.decorators import login_required
+@login_required
+def java_page_view(request):
+	------
+	------
+
+Problem-1:
+----------------
+Page not found (404)
+Request Method:	GET
+Request URL:	http://127.0.0.1:8000/accounts/login/?next=/java/
+
+Solved this problem by including auth application url's
+
+urls.py
+----------
+path('accounts/', include('django.contrib.auth.urls'))
+
+Problem-2:
+----------------
+TemplateDoesNotExist at /accounts/login/
+registration/login.html
+
+-->Create a folder under 'templates' with the name of 'registration' and create a file login.html
+
+login.html
+----------------
+<!DOCTYPE html>
+{% extends 'testapp/base.html' %}
+{% block body_block %}
+<div class="jumbotron">
+    <div class="container" align="center">
+        <h1>Please Login To Write Exams.....</h1>
+      <form method="post">
+        {{form.as_p}}
+        {% csrf_token %}
+        <input type="submit" value="Login">
+      </form>
+    </div>
+</div>
+{% endblock %}
+
+-->makemigrations and migrate
