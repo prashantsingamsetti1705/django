@@ -16,8 +16,8 @@ def gf_view(request):
     form=Gf_form()
     return render(request,'testapp/gf.html',{'form':form,'name':name})
 def res_view(request):
-    gf=request.GET.get('gf')
-    request.session['gf']=gf
-    name=request.session['name']
-    age=request.session['age']
+    gf = request.GET['gf']
+    request.session['gf'] = gf
+    name = request.session['name']
+    age = request.session['age']
     return render(request,'testapp/res.html')
