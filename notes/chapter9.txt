@@ -177,3 +177,278 @@ login.html
 {% endblock %}
 
 -->makemigrations and migrate
+Implementing login functionality:
+---------------------------------------------------
+Note:
+		login page url pattern from auth application:/accounts/login
+
+Requested URL:http://127.0.0.1:8000/accounts/login/?next=/java/
+
+If we click login button, after login the next page is profile page bydefault.
+If we want to configure our own destination page, we have to write a line in settings.py.
+						LOGIN_REDIRECT_URL = '/'
+
+Step-1:base.html
+			<a class="nav-link" href="/accounts/login">Login</a>
+
+Step-2:Configure destination page inside settings.py
+			LOGIN_REDIRECT_URL = '/'
+
+-->After getting home page then we acceess all pages without login.					
+
+Implementing logout functionaity:
+----------------------------------------------------
+Step-1:Update logout in base.html
+		 <a class="nav-link" href="/accounts/logout">Logout</a>
+
+Step-2:The default destination page for logout is admin logout page.
+		We can configure our own logout destination page
+						LOGOUT_REDIRECT_URL = '/'
+		Here logout destination page:home page(/)			
+
+Defining separate logout destination page:
+-----------------------------------------------------------------
+views.py
+-------------
+def logout_view(request):
+    return render(request,'testapp/logout.html')
+
+logout.html
+------------------
+<!DOCTYPE html>
+{% extends 'testapp/base.html' %}
+{% block body_block %}
+<div class="jumbotron">
+    <div class="container" align="center">
+        <h1>Thanks for using MAHESHEXAMS</h1>
+        <p>Anyway we are feeling very sad bcoz you logout, atleast 24-hrs 
+		per day you have to use our app</p>
+        <h2>Please login again to enjoy......</h2>
+        <a href="/accounts/login" class="btn btn-success">Login</a>
+    </div>
+</div>
+{% endblock %}
+
+urls.py:
+	path('logout/',views.logout_view)
+
+settings.py: LOGOUT_REDIRECT_URL = '/logout'
+
+Implementing signup button functionality:
+----------------------------------------------------------------
+-->auth application having form class to provide login form.
+-->But auth application does not contain any form class for signup functionality.
+-->If a user signup, compulsory that information should be stored in DB(User table)
+
+-->Display form to signup and that information should be stored inside database directly. For such type of requirement it is highly recommended to go for model based form.
+
+forms.py
+--------------
+from django import forms
+from django.contrib.auth.models import User
+class SignUpForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ['username','password','email','first_name','last_name']
+ 
+views.py
+-------------
+from testapp.forms import SignUpForm
+def signup_view(request):
+    form = SignUpForm()
+    return render(request,'testapp/signup.html',{'form':form})
+
+signup.html
+------------------
+<!DOCTYPE html>
+{% extends 'testapp/base.html' %}
+{% block body_block %}
+<div class="jumbotron">
+    <div class="container">
+        <h1>Please SignUp To Write Exams.....</h1>
+      <form method="post">
+        {{form.as_p}}
+        {% csrf_token %}
+        <input type="submit" value="SignUp">
+      </form>
+    </div>
+</div>
+{% endblock %}
+
+urls.py: path('signup/',views.signup_view)
+
+base.html: <a class="nav-link" href="/signup">Signup</a>
+
+views.py
+------------
+if request.method == 'POST':
+	form = SignUpForm(request.POST)
+    form.save()
+
+-->In django auth application, User model, the password should not be saved directly. It should be hashed by using some security algorithm. The default password hashing algorithm:pbkdf2_sha256
+
+form.save():We are trying to save password in the plain text form
+		Invalid password format or unknown hashing algorithm.
+
+views.py
+-------------
+if request.method == 'POST':
+	form = SignUpForm(request.POST)
+    user = form.save()
+    user.set_password(user.password)#To hash password
+    user.save()
+    return HttpResponseRedirect('/accounts/login')
+
+Password Hashers:
+-----------------------------
+
+DJANGO @ 4:00 PM | Mr.Mahesh [24th March]
+Mr.Mahesh
+Upcoming
+Woohoo, no work due in soon!
+Material
+Mahesh Python posted a new material: 10/5/25(FBVs)
+Posted 10 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 9/5/25(CRUD operations by FBV's)
+Posted 9 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 8/5/25(Authentication & Authorization)
+Posted 8 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 7/5/25(Authentication & Authorization)
+Posted 7 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 6/5/25(Session Management)
+Posted 6 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 5/5/25(Session Management)
+Posted 5 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 2/5/25(Session Management)
+Posted 2 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 1/5/25(Session Management)
+Posted 1 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 30/4/25(Template Filters)
+Posted 30 Apr
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 29/4/25(Template Inheritance)
+Posted 29 Apr
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 28/4/25(Model Form)
+Posted 28 Apr
+
+django.txt
+Text
+
+Announcement: 'Hi, There is No Class Today [26-04-2025]'
+Naresh Technologies
+Created 26 Apr26 Apr
+Hi,
+
+There is No Class Today [26-04-2025]
+
+Announcement: 'Hi, There is No Class Today [25-04-2025]'
+Naresh Technologies
+Created 25 Apr25 Apr
+Hi,
+
+There is No Class Today [25-04-2025]
+Material
+Mahesh Python posted a new material: 24/4/25(Model Based Form)
+Posted 24 Apr
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 23/4/25(Django Forms)
+Posted 23 Apr
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 22/4/25(Form Validations)
+Posted 22 Apr
+
+django.txt
+Text
+
+Announcement: 'Dear Students Today No Class'
+Naresh Technologies
+Created 21 Apr21 Apr
+Dear Students 
+
+Today No Class
+Material
+Mahesh Python posted a new material: 19/4/25(Django Forms)
+Posted 19 Apr
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 18/4/25(Models)
+Posted 18 Apr
+
+django.txt
+Text
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 17/4/25(Models)
+Posted 17 Apr
+
+django.txt
+Text
+Password Hashers:
+----------------------------
+The default password hasher:pbkdf2_sha256
+We can use other more secured password hashers also
+bcrypt, argon2 etc....
+
+>>>pip install bcrypt
+>>>pip install django[argon2]
+
+More secured algorithm is argon2 followed by bcrypt and then sha256.
+
+In settings.py we have to configure password hashers as:
+
+PASSWORD_HASHERS = [
+    'django.contrib.auth.hashers.Argon2PasswordHasher',
+    'django.contrib.auth.hashers.BCryptSHA256PasswordHasher',
+    'django.contrib.auth.hashers.BCryptPasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2PasswordHasher',
+    'django.contrib.auth.hashers.PBKDF2SHA1PasswordHasher',
+]

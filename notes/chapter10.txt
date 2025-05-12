@@ -1,0 +1,220 @@
+CHAPTER-10:Class Based Views and CRUD OPerations by using CBVs and FBVs
+======================================================================
+CRUD Operations:
+	FBVs==>Function Based Views
+	CBVs==>Class Based Views
+	Django ORM
+
+C --->Create (Insert Operations)
+R --->Retrieve/Read(select query)
+U --->Update(update)
+D --->Delete(delete)
+
+CRUD operations FBV's
+-----------------------------------
+django-admin startproject fbvproject
+py manage.py startapp testapp
+Add app in settings.py
+
+models.py
+----------------
+class Employee(models.Model):
+    eno = models.IntegerField()
+    ename = models.CharField(max_length=64)
+    esal = models.FloatField()
+    eaddr = models.CharField(max_length=128)
+
+-->makemigrations and migrate
+
+admin.py
+--------------
+from testapp.models import Employee
+class EmployeeAdmin(admin.ModelAdmin):
+    list_display = ['eno','ename','esal','eaddr']
+admin.site.register(Employee,EmployeeAdmin)
+
+-->create super user
+
+populate.py
+------------------
+import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'fbvproject.settings')
+import django
+django.setup()
+
+from faker import Faker
+from testapp.models import Employee
+from random import *
+fake = Faker()
+
+def populate(n):
+    for i in range(n):
+        feno = randint(1001,9999)
+        fename = fake.name()
+        fesal = randint(10000,20000)
+        feaddr = fake.city()
+        emp_record = Employee.objects.get_or_create(
+            eno = feno,
+            ename = fename,
+            esal = fesal,
+            eaddr = feaddr)
+n = int(input('Enter number of employees:'))
+populate(n)
+print(f'{n} Records inserted successfully.....')
+
+views.py
+-------------
+from testapp.models import Employee
+def retrieve_view(request):
+    emp_list = Employee.objects.all()
+    return render(request,'testapp/index.html',{'emp_list':emp_list})
+
+base.html
+---------------
+<body>
+    <div class="container" align="center">
+        {% block body_block %}
+        {% endblock %}
+    </div>
+</body>
+
+index.html
+-----------------
+<!DOCTYPE html>
+{% extends 'testapp/base.html' %}
+{% block body_block %}
+<h1>Welcome To Employee List</h1><hr>
+<table border="3">
+  <thead>
+    <th>Employee Number</th>
+    <th>Employee Name</th>
+    <th>Employee Salary</th>
+    <th>Employee Address</th>
+    <th>Actions</th>
+  </thead>
+  {% for emp in emp_list %}
+  <tr>
+    <td>{{emp.eno}}</td>
+    <td>{{emp.ename}}</td>
+    <td>{{emp.esal}}</td>
+    <td>{{emp.eaddr}}</td>
+    <td><a href="#">Update</a>&nbsp&nbsp&nbsp
+    <a href="#">Delete</a></td>
+  </tr>
+  {% endfor %}
+</table>
+<br><br>
+<a href="#" class="btn btn-success">Insert New Employee</a>
+{% endblock %}
+forms.py
+-------------
+from django import forms
+from testapp.models import Employee
+class EmployeeForm(forms.ModelForm):
+    class Meta:
+        model = Employee
+        fields = '__all__'
+
+views.py
+-------------
+from testapp.forms import EmployeeForm
+def insert_view(request):
+    form = EmployeeForm()
+    return render(request,'testapp/insert.html',{'form':form})
+
+insert.html
+-----------------
+<!DOCTYPE html>
+{% extends 'testapp/base.html' %}
+{% block body_block %}
+<h1>Employee Insert Form</h1><hr>
+<form method="post">
+    {{form.as_p}}
+    {% csrf_token %}
+    <input class="btn btn-success btn-lg" type="submit" value="Insert Record">
+</form>
+{% endblock %}
+
+urls.py: path('insert/',views.insert_view)
+
+views.py
+-------------
+rom django.shortcuts import render,redirect
+def insert_view(request):
+    form = EmployeeForm()
+    if request.method == 'POST':
+        form = EmployeeForm(request.POST)
+        if form.is_valid():
+            form.save()
+        return redirect('/')
+    return render(request,'testapp/insert.html',{'form':form})
+
+DELETE:
+--------------
+views.py
+-------------
+def delete_view(reqest,id):
+    employee = Employee.objects.get(id=id)
+    employee.delete()
+    return redirect('/')
+
+step-1:index.html:
+	<a href="/delete/{{emp.id}}">Delete</a></td>
+
+step-2:urls.py:
+	path('delete/<int:id>', views.delete_view)
+
+UPDATE:
+--------------
+step-1:
+	<a href="/update/{{emp.id}}">Update</a>
+
+step-2:
+	path('update/<int:id>', views.update_view)
+
+views.py
+------------
+def update_view(request,id):
+    employee = Employee.objects.get(id=id)
+    form = EmployeeForm(instance=employee)
+    return render(request,'testapp/update.html',{'form':form})
+
+update.html
+-------------------
+<!DOCTYPE html>
+{% extends 'testapp/base.html' %}
+{% block body_block %}
+<h1>Employee Update Form</h1><hr>
+<form method="post">
+    {{form.as_p}}
+    {% csrf_token %}
+    <input class="btn btn-success btn-lg" type="submit" value="Update Record">
+</form>
+{% endblock %}
+
+if employee want to update record
+-----------------------------------------------------
+def update_view(request,id):
+    employee = Employee.objects.get(id=id)
+    form = EmployeeForm(instance=employee)
+    if request.method == 'POST':
+        form = EmployeeForm(request.POST,instance=employee)
+        if form.is_valid():
+            form.save()
+        return redirect('/')
+    return render(request,'testapp/update.html',{'form':form})
+
+Types of Views:
+	1.FBV's
+	2.CBV's
+
+Class Based View(CBV's):
+-------------------------------------
+1.FBVs are old where as CBVs are new. CBVs are introduces in Django1.3 version to implement generic views.
+2.CBVs are very easy to use when copared with FBVs. The most commonly used type of views in real time is CBVs.
+3.FBVS more powerful when compare with CBVs. If you are unable to handle with CBVs then only we have to go for FBVs.
+
+CBVs meant for common requrement.
+Ex:
+	Read data from Employee table--->CBVs
+	Complex operation over Employee and Customer tables simultaneously-->FBVs
