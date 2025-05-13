@@ -218,3 +218,163 @@ CBVs meant for common requrement.
 Ex:
 	Read data from Employee table--->CBVs
 	Complex operation over Employee and Customer tables simultaneously-->FBVs
+
+
+Ex:
+-----
+django-admin startproject cbvproject
+py manage.py startapp testapp
+Add app in settings.py
+
+views.py
+------------
+from django.views.generic import View
+from django.http import HttpResponse
+class HelloWorldView(View):
+    def get(self,request):
+        return HttpResponse('<h1>This response is from class based view</h1>')
+
+urls.py:
+	path('hello/',views.HelloWorldView.as_view())
+
+Note:
+--------
+1).While defining class based view we have to extend View class.
+2).To provide response to GET request django will always call get() method. Hence we have to override this method in our class. Similarly other http methods post(), put(), patch(), delete().....
+3).While defining url pattern we have to use as_view() method.
+
+Template based app by using CBVs:
+------------------------------------------------------
+views.py
+-------------
+from django.views.generic import TemplateView
+class TemplateCBV(TemplateView):
+    template_name = 'testapp/results.html'
+
+results.html
+-------------------
+<body>
+  <h1>Hello this is from tmplate based CBV</h1>
+</body>
+
+urls.py:
+	path('tt/', views.TemplateCBV.as_view())
+
+How to send context parameter:
+------------------------------------------------
+views.py
+-------------
+class TemplateCBV2(TemplateView):
+    template_name = 'testapp/results2.html'
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['name'] = 'Sunny'
+        context['marks'] = 98
+        context['subject'] = 'Python'
+        return context
+
+results2.html
+--------------------
+<body>
+    <h1>Student Information</h1>
+    <h2>Student Name:{{name}}</h2>
+    <h2>Student Marks:{{marks}}</h2>
+    <h2>Student Subject:{{subject}}</h2>
+</body>
+
+urls.py:
+	path('tt2/', views.TemplateCBV2.as_view())
+
+Model related View classes to perform CRUD operations:
+-------------------------------------------------------------------------------------
+View
+TemplateView
+
+To perform CRUD operations, predefined View classes are:
+	ListView			-->To select all records(R)
+	DetailView		-->To get details of a particular record(R)
+	CreateView		-->To insert a record(C)
+	DeleteView		-->To delete a record(D)
+	UpdateView		-->To update record(U)
+
+1).ListView:
+	We can use ListView class to list out all records from the DB(Model)
+	It is alternative way to:ModelClassName.objects.all()
+
+default template file name:modelname_list.html
+default context object name:modelname_list
+
+Ex:
+django-admin startproject cbvproject2
+py manage.py startapp testapp
+Add app in settings.py
+
+models.py
+---------------
+class Book(models.Model):
+    title = models.CharField(max_length=30)
+    author = models.CharField(max_length=30)
+    pages = models.IntegerField()
+    price = models.FloatField()
+
+-->makemigrations and migrate
+
+admin.py
+-------------
+from testapp.models import Book
+class BookAdmin(admin.ModelAdmin):
+    list_display = ['title','author','pages','price']
+admin.site.register(Book,BookAdmin)
+
+views.py
+-------------
+from django.views.generic import ListView
+from testapp.models import Book
+class BookListView(ListView):
+    model = Book
+
+urls.py:
+	path('list/', views.BookListView.as_view())
+
+book_list.html
+----------------------
+<body>
+  <h1>All Books Information</h1>
+  {% for book in book_list %}
+  <ul>
+    <li>Title:<strong>{{book.title}}</strong></li>
+    <li>Author:<strong>{{book.author}}</strong></li>
+    <li>Pages:<strong>{{book.pages}}</strong></li>
+    <li>Price:<strong>{{book.price}}</strong></li>
+  </ul>
+  <hr>
+  {% endfor %}
+</body>
+
+how to configure our own tempate file and context object:
+-----------------------------------------------------------------------------------------
+By using template_name & context_object_name variables
+
+views.py
+------------
+class BookListView(ListView):
+    model = Book
+    template_name = 'testapp/books.html'
+    context_object_name = 'books'
+
+books.html
+-----------------
+<body>
+<div class="container">
+  <h1>All Books Information from customized template file</h1>
+  {% for book in books %}
+  <ul>
+    <li>Title:<strong>{{book.title}}</strong></li>
+    <li>Author:<strong>{{book.author}}</strong></li>
+    <li>Pages:<strong>{{book.pages}}</strong></li>
+    <li>Price:<strong>{{book.price}}</strong></li>
+  </ul>
+  <hr>
+  {% endfor %}
+</div>
+</body>
