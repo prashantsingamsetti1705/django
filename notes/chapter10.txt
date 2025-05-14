@@ -378,3 +378,170 @@ books.html
   {% endfor %}
 </div>
 </body>
+
+DetailView:
+-----------------
+	To get the details of a particular record
+
+views.py
+------------
+class BookListView2(ListView):
+    model = Book
+    template_name = 'testapp/books.html'
+    context_object_name = 'books'
+
+books.html
+-----------------
+<div class="container">
+  <h1>All Books Information</h1>
+  <ol>
+  {% for book in books %}
+     <li><a href="#">{{book.title}}</a></li>
+  {% endfor %}
+  </ol>
+</div>
+
+urls.py:
+	path('list2/', views.BookListView2.as_view())
+
+DetailView:
+----------------
+Default template_file = book_detail.html
+Default context_object_name = book or object
+
+views.py
+-------------
+class BookDetailView(DetailView):
+    model = Book
+
+urls.py:
+	path('<int:pk>/', views.BookDetailView.as_view())
+
+book_detail.html:
+--------------------------
+    <div class="container">
+        <h1>{{book.title}} Information</h1>
+        <ul>
+            <li>Title:<strong>{{book.title}}</strong></li>
+            <li>Author:<strong>{{book.author}}</strong></li>
+            <li>Pages:<strong>{{book.pages}}</strong></li>
+            <li>Price:<strong>{{book.price}}</strong></li>
+        </ul>
+    </div>
+
+books.html
+----------------
+<li><a href="/{{book.id}}">{{book.title}}</a></li>
+
+CreateView:
+------------------
+views.py
+------------
+class BookCreateView(CreateView):
+    model = Book
+
+urls.py:
+	path('create/', views.BookCreateView.as_view())
+
+If we send request:
+	http://127.0.0.1:8000/create/
+
+We are getting an error:
+	ImproperlyConfigured at /create/
+	Using ModelFormMixin (base class of BookCreateView) without the 'fields' attribute is prohibited.
+
+views.py
+-------------
+fields = ('title','author','pages','price')
+
+If we send request, we will get an error:
+	TemplateDoesNotExist at /create/
+	testapp/book_form.html
+
+book_form.html
+------------------------
+<div class="container" align="center">
+        <h1>Book Insert/Create Form</h1>
+        <form method="post">
+            {{form.as_p}}
+            {% csrf_token %}
+            <input class="btn btn-success" type="submit" value="Insert New Book">
+        </form>
+</div>
+
+If we fill the form and submit:
+---------------------------------------------
+-->The record will be inserted into database, but we will get an error.
+-->After inserting to which page, control has to go, we did not define anywhere. This is the reason for error.
+
+ImproperlyConfigured at /create/
+No URL to redirect to.  Either provide a url or define a get_absolute_url method on the Model.
+
+models.py
+---------------
+from django.urls import reverse
+class Book(models.Model):
+    All fileds
+
+    def get_absolute_url(self):
+        return reverse('detail',kwargs={'pk':self.pk})
+
+urls.py:
+	path('<int:pk>/', views.BookDetailView.as_view(),name='detail'),
+
+UpdateView:
+-------------------
+views.py
+------------
+class BookUpdateView(UpdateView):
+    model = Book
+    fields = '__all__'
+
+urls.py:
+	path('update/<int:pk>/', views.BookUpdateView.as_view())
+
+The default template is:book_form.html
+
+Adding update button in book_detail.html page
+------------------------------------------------------------------------
+<a class="btn btn-warning" href="/update/{{book.id}}">Update This Book Information</a>
+
+DeleteView:
+------------------
+views.py
+-------------
+from django.urls import reverse_lazy
+class BookDeleteView(DeleteView):
+    model = Book
+    success_url = reverse_lazy('/list2')
+
+success_url represents the target page which should be displayed after delete operation.
+reverse_lazy() function will wait until deleteing the record.
+
+urls.py:
+	path('delete/<int:pk>/', views.BookDeleteView.as_view())
+
+If we send request:
+	 http://127.0.0.1:8000/delete/7/
+
+we will get an error:
+	TemplateDoesNotExist at /delete/7/
+	testapp/book_confirm_delete.html
+
+book_confirm_delete.html
+---------------------------------------
+<div class="container" align="center">
+        <h1>Do you want to really delete book:{{book.title}}???</h1>
+        <form method="post">
+           {% csrf_token %}
+            <input class="btn btn-danger" type="submit" value="Delete Book">
+            <a class="btn btn-success" href="/list2">Cancel(Don't Delete)</a>
+        </form>
+</div>
+
+success_url = reverse_lazy('listbooks')
+path('list2/', views.BookListView2.as_view(),name='listbooks')
+
+Add delete button in book_detail.html
+----------------------------------------------------------
+<a class="btn btn-danger" href="/delete/{{book.id}}">Delete This Book Information</a>
