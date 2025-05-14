@@ -18,6 +18,19 @@ from django.contrib import admin
 from django.urls import path
 from testapp import views
 urlpatterns = [
-    path('admin/', admin.site.urls),
-    path('bookview/',views.BookListView.as_view())
+    # path('admin/', admin.site.urls),
+    # path('bookview/',views.BookListView.as_view()),
+    # path('bookview2/',views.BookListView2.as_view()),
+    # path('<int:pk>/',views.DetailView.as_view(),name='detail'),
+    # path('create/',views.CreateView.as_view()),
+    # path('update/<int:pk>/',views.UpdateView.as_view()),
+    # path('delete/<int:pk>/',views.DeleteView.as_view()),
+        path('admin/', admin.site.urls),
+    path('bookview/', views.BookListView.as_view(), name='book_list'),
+    path('bookview2/', views.BookListView2.as_view(), name='book_list2'),
+    path('<int:pk>/', views.DetailView.as_view(), name='detail'),
+    path('create/', views.CreateView.as_view(), name='create_book'),
+    path('update/<int:pk>/', views.UpdateView.as_view(), name='update_book'),
+    path('delete/<int:pk>/', views.DeleteView.as_view(), name='delete_book'),
+
 ]
