@@ -1,0 +1,425 @@
+
+CHAPTER-11:Django ORM
+========================
+ORM--->Object Relational Mapping
+
+To select all employees from the employee table:
+	sql query:select * from employee;
+	ORM:Employee.objects.all()
+
+Ex:
+-----
+django-admin startproject ormproject1
+py manage.py startapp testapp
+Add app in settings.py
+
+models.py
+---------------
+class Employee(models.Model):
+    eno = models.IntegerField()
+    ename = models.CharField(max_length=64)
+    esal = models.FloatField()
+    eaddr = models.CharField(max_length=128)
+
+-->makemigrations and migrate
+
+admin.py
+--------------
+from testapp.models import Employee
+class EmployeeAdmin(admin.ModelAdmin):
+    list_display = ['eno','ename','esal','eaddr']
+admin.site.register(Employee,EmployeeAdmin)
+
+-->create super user
+
+populate.py
+-----------------
+import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ormproject1.settings')
+import django
+django.setup()
+
+from testapp.models import Employee
+from faker import Faker
+from random import *
+faker = Faker()
+
+def populate(n):
+    for i in range(n):
+        feno = randint(1001,9999)
+        fename = faker.name()
+        fesal = randint(10000,20000)
+        feaddr = faker.city()
+        emp_record = Employee.objects.get_or_create(
+            eno = feno,
+            ename = fename,
+            esal = fesal,
+            eaddr = feaddr)
+n = int(input('Enter number of employees:'))
+populate(n)
+print(f'{n} Records inserted successfully.....')
+
+views.py
+------------
+from testapp.models import Employee
+def retrieve_view(request):
+    emp_list = Employee.objects.all()
+    return render(request,'testapp/index.html',{'emp_list':emp_list})
+
+base.html
+---------------
+<body>
+    <div class="container" align="center">
+        {% block body_block %}
+        {% endblock %}
+    </div>
+</body>
+
+index.html
+-----------------
+<!DOCTYPE html>
+{% extends 'testapp/base.html' %}
+{% block body_block %}
+    <h1>Employee Information DashBoard</h1>
+    <table border="3">
+        <thead>
+            <th>Employee Number</th>
+            <th>Employee Name</th>
+            <th>Employee Salary</th>
+            <th>Employee Address</th>
+        </thead>
+        {% for emp in emp_list %}
+        <tr>
+            <td>{{emp.eno}}</td>
+            <td>{{emp.ename}}</td>
+            <td>{{emp.esal}}</td>
+            <td>{{emp.eaddr}}</td>
+        </tr>
+        {% endfor %}
+    </table>
+	<br><br>
+{% endblock %}
+
+urls.py:
+	path('',views.retrieve_view)
+
+To select all records:
+	Employee.objects.all()
+	The return type of all() method is:QuerySet
+
+views.py:
+	print(type(emp_list))
+	<class 'django.db.models.query.QuerySet'>
+
+To get a particular record:
+	by using get() method
+
+D:\DJANGO_26MAR_4PM\ormproject1>py manage.py shell
+>>> from testapp.models import Employee
+>>> emp = Employee.objects.get(id=1)
+>>> emp #<Employee: Employee object (1)>
+>>> emp.ename #'Michael Whitehead'
+>>> emp.esal #19685.0
+>>> type(emp) #<class 'testapp.models.Employee'>
+
+-->The return type of get() method is Employee object
+
+How to find query associated with QuerySet:
+-------------------------------------------------------------------
+Every ORM statement will be converted into sql query. We can find query from the QuerySet.
+
+>>> qs = Employee.objects.all()
+>>> qs.query #<django.db.models.sql.query.Query object at 0x>
+>>> str(qs.query)
+'SELECT "testapp_employee"."id", "testapp_employee"."eno", "testapp_employee"."ename", "testapp_employee"."esal", "testapp_employee"."eaddr" FROM "testapp_employee"'
+
+DJANGO @ 4:00 PM | Mr.Mahesh [24th March]
+Mr.Mahesh
+Upcoming
+Woohoo, no work due in soon!
+Material
+Mahesh Python posted a new material: 17/5/25(Django ORM)
+Posted 17 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 16/5/25(Django ORM)
+Posted 16 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 15/5/25(CBVs)
+Posted 15 May
+
+django.txt
+Text
+
+Announcement: 'Dear Students Today No Class'
+Naresh Technologies
+Created 14 May14 May
+Dear Students
+
+Today No Class
+Material
+Mahesh Python posted a new material: 13/5/25(CBV's)
+Posted 13 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 12/5/25(CBV's)
+Posted 12 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 10/5/25(FBVs)
+Posted 10 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 9/5/25(CRUD operations by FBV's)
+Posted 9 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 8/5/25(Authentication & Authorization)
+Posted 8 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 7/5/25(Authentication & Authorization)
+Posted 7 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 6/5/25(Session Management)
+Posted 6 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 5/5/25(Session Management)
+Posted 5 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 2/5/25(Session Management)
+Posted 2 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 1/5/25(Session Management)
+Posted 1 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 30/4/25(Template Filters)
+Posted 30 Apr
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 29/4/25(Template Inheritance)
+Posted 29 Apr
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 28/4/25(Model Form)
+Posted 28 Apr
+
+django.txt
+Text
+
+Announcement: 'Hi, There is No Class Today [26-04-2025]'
+Naresh Technologies
+Created 26 Apr26 Apr
+Hi,
+
+There is No Class Today [26-04-2025]
+
+Announcement: 'Hi, There is No Class Today [25-04-2025]'
+Naresh Technologies
+Created 25 Apr25 Apr
+Hi,
+
+There is No Class Today [25-04-2025]
+Material
+Mahesh Python posted a new material: 24/4/25(Model Based Form)
+Posted 24 Apr
+
+django.txt
+Text
+How to filter records based on some condition:
+=========================================
+Q.To select all employees whose sal greater than 15000.
+emp_list = Employee.objects.filter(esal__gt=18000)
+
+Q.To select all employees whose sal greater than or equal to 15000.
+To select all employees whose sal greater than 15000.
+
+Similarly we can use __lt and __lte also.
+
+1).exact():
+	>>> emp = Employee.objects.get(id__exact=51)
+	>>> emp.eanme
+	>>> emp = Employee.objects.get(id=51)
+	>>> emp.ename
+
+2).contains():
+	emp_list = Employee.objects.filter(ename__contains='smith')
+
+3).in:select all employees where id is in [1,3,5]
+	emp_list = Employee.objects.filter(id__in=[1,3,5])
+
+4).gt:greater than
+
+5).gte:greater than or equal to
+
+6).lt:lessthan
+
+7).lte:less than or equal to
+
+8).startswith:select employees where ename starts with 'S'
+	emp_list = Employee.objects.filter(ename__startswith='S')
+
+9).endswith():
+	emp_list = Employee.objects.filter(ename__endswith='A')
+
+10).range:range test(inclusive)
+	emp_list = Employee.objects.filter(esal__range=[12000,15000])
+
+Q1.select all employees where ename starts with 'S'
+	emp_list = Employee.objects.filter(ename__startswith='S')
+
+Q2.select all employees whose sal is < 15000?
+	emp_list = Employee.objects.filter(esal__lt=15000)
+
+Q3.select all employees where ename starts with 'S' or esal < 15000?
+We can implement OR queries in 2-ways
+
+1st way
+-----------
+emp_list = queryset1 | queryset2
+emp_list = Employee.objects.filter(ename__startswith='S') | Employee.objects.filter(esal__lt=12000)
+
+2nd way
+------------
+filter(Q(condition1) | Q(condition2))
+from django.db.models import Q
+emp_list = Employee.objects.filter(Q(ename__startswith='A') | Q(esal__lt=13000))
+
+How to implememnt and queries?
+--------------------------------------------------
+3-ways are there
+-------------------------
+1.queryset1 & queryset2
+2.filter(Q(condition1) & Q(condition))
+3.filter(condition1,condition2)
+
+Ex:select all employees where ename starts with 'S' and esal < 15000.
+----------------------------------------------------------------------------------------------------------
+1).emp_list = Employee.objects.filter(ename__startswith='S') & Employee.objects.filter(esal__lt=15000)
+
+2).emp_list = Employee.objects.filter(Q(ename__startswith='A') & Q(esal__lt=18000))
+
+3).emp_list = Employee.objects.filter(ename__startswith='A',esal__lt=18000)
+
+How to implement Not queries?
+------------------------------------------------
+1st way:exclude(condition)-->To get records where condition failed
+2nd way:filter(~Q(condition))
+
+Ex:To select all employees whose name not starts with 'S'
+-----------------------------------------------------------------------------------------
+emp_list = Employee.objects.exclude(ename__startswith='S')
+emp_list = Employee.objects.filter(~Q(ename__startswith='S'))
+
+How to select only required columns in the query set?
+-----------------------------------------------------------------------------------
+select * from employee;
+select ename,esal from employee;
+
+3-ways:
+-----------
+1.By using values_list():
+------------------------------------
+views.py
+------------
+def retrieve_view(request):
+    emp_list = Employee.objects.all().values_list('ename','esal')
+    return render(request, 'testapp/specificcolumns.html', {'emp_list': emp_list})
+
+specificcolumns.html
+---------------------------------
+    <table border="3">
+        <thead>
+            <th>Employee Name</th>
+            <th>Employee Salary</th>
+        </thead>
+        {% for emp in emp_list %}
+        <tr>
+            {% for v in emp %}
+            <td>{{v}}</td>
+            {% endfor %}
+        </tr>
+        {% endfor %}
+	</table>
+
+2).By using values():
+------------------------------
+emp_list = Employee.objects.all().values('ename','esal')
+
+in htmls file
+------------------
+{% for emp in emp_list %}
+        <tr>
+            {% for k,v in emp.items %}
+                <td>{{v}}</td>
+            {% endfor %}
+        </tr>
+{% endfor %}
+
+3).By using only():
+---------------------------
+emp_list = Employee.objects.all().only('ename','esal')
+
+html file
+-------------
+{% for emp in emp_list %}
+        <tr>
+            <td>{{emp.ename}}</td>
+            <td>{{emp.esal}}</td>
+        </tr>
+{% endfor %}
+
+Note:
+	values_list()-->QuerySet contains tuple
+	values()-->QuerySet contains dict objects
+	only()-->QuerySet contains Employee objects
+
+-->Hence values() method is recommended to use when compared with others
+
+Aggregate Functions:
+---------------------------------
+Avg(), Max(), Min(), Sum(), Count() etc..............
+
+Q.Difference between str() and repr() (OR) diff __str__() and __repr__() method?
+---------------------------------------------------------------------------------------------------------------------
+import datetime
+today = datetime.datetime.now()
+print(type(today))
+s = repr(today)
+print(type(s))
+d = eval(s)
+print(type(d))

@@ -545,3 +545,186 @@ path('list2/', views.BookListView2.as_view(),name='listbooks')
 Add delete button in book_detail.html
 ----------------------------------------------------------
 <a class="btn btn-danger" href="/delete/{{book.id}}">Delete This Book Information</a>
+CRUD operations by using CBV's:
+-------------------------------------------------
+django-admin startproject cbvproject3
+py manage.py startapp testapp
+Add app in settings.py
+
+models.py
+---------------
+class Company(models.Model):
+    name = models.CharField(max_length=30)
+    location = models.CharField(max_length=30)
+    ceo = models.CharField(max_length=30)
+
+-->makemigrations and migrate
+
+admin.py
+--------------
+from testapp.models import Company
+class CompanyAdmin(admin.ModelAdmin):
+    list_display = ['name','location','ceo']
+admin.site.register(Company,CompanyAdmin)
+
+views.py
+------------
+from django.views.generic import ListView
+from testapp.models import Company
+class CompanyListView(ListView):
+    model = Company
+
+Default template file name:company_list.html
+Default context object name:company_list
+
+base.html
+--------------
+<body>
+  <div class="container">
+    {% block body_block %}
+    {% endblock %}
+  </div>
+</body>
+
+company_list.html
+-----------------------------
+<!DOCTYPE html>
+{% extends 'testapp/base.html' %}
+{% block body_block %}
+    <h1>List of all companies</h1>
+    <ul>
+    {% for company in company_list %}
+        <li>{{company.name}}</li>
+        <li>{{company.location}}</li>
+        <li>{{company.ceo}}</li>
+    <hr>
+    {% endfor %}
+    </ul>
+{% endblock %}
+
+urls.py:
+	path('',views.CompanyListView.as_view())
+
+views.py
+-------------
+class CompanyDetailView(DetailView):
+    model = Company
+
+template file name:company_detail.html
+context object name:company or object
+
+urls.py:
+	path('<int:pk>/', views.CompanyDetailView.as_view())
+
+company_list.html
+-----------------------------
+{% for company in company_list %}
+        <li><a href="#">{{company.name}}</a></li>
+{% endfor %}
+
+company_detail.html
+---------------------------------
+<!DOCTYPE html>
+{% extends 'testapp/base.html' %}
+{% block body_block %}
+    <h1>{{company.name}} Information</h1>
+    <ul>
+     <h2><li>Company Name:{{company.name}}</li></h2>
+     <h2><li>Company Location:{{company.location}}</li></h2>
+     <h2><li>Company CEO:{{company.ceo}}</li></h2>
+    </ul>
+{% endblock %}
+
+views.py
+-------------
+class CompanyCreateView(CreateView):
+    model = Company
+    fields = '__all__'
+
+urls.py:
+	path('create/', views.CompanyCreateView.as_view())
+
+template file name:company_form.html
+
+company_form.html
+-------------------------------
+<!DOCTYPE html>
+{% extends 'testapp/base.html' %}
+{% block body_block %}
+    <h1>Company Insert/Update Form</h1>
+    <form method="post">
+      {{form.as_p}}
+      {% csrf_token %}
+      <input class="btn btn-primary" type="submit" value="Insert/Update Record">
+    </form>
+{% endblock %}
+
+ImproperlyConfigured at /create/
+No URL to redirect to.  Either provide a url or define a get_absolute_url method on the Model.
+
+models.py
+----------------
+from django.urls import reverse
+class Company(models.Model):
+	-------
+    def get_absolute_url(self):
+        return reverse('detail',kwargs={'pk':self.pk})
+
+company_list.html
+----------------------------
+<a class="btn btn-success" href="/create">Insert New Company</a>
+
+views.py
+-------------
+class CompanyUpdateView(UpdateView):
+    model = Company
+    fields = ('location','ceo')
+
+urls.py:
+	path('update/<int:pk>', views.CompanyUpdateView.as_view())
+
+company_detail.html
+--------------------------------
+<a class="btn btn-warning" href="/update/{{company.id}}">Update Record</a>
+<a class="btn btn-success" href="/">Companies List</a>
+
+views.py
+-------------
+from django.urls import reverse_lazy
+class CompanyDeleteView(DeleteView):
+    model = Company
+    success_url = reverse_lazy('list')
+
+urls.py:
+	path('delete/<int:pk>', views.CompanyDeleteView.as_view())
+
+company_confirm_delete.html
+----------------------------------------------
+<!DOCTYPE html>
+{% extends 'testapp/base.html' %}
+{% block body_block %}
+    <h1>Do you want to really delete the company:{{company.name}}?????</h1>
+    <form method="post">
+     {% csrf_token %}
+      <input class="btn btn-danger" type="submit" value="Delete Record">
+        <a class="btn btn-success" href="/{{company.id}}">Cancel</a>
+    </form>
+{% endblock %}
+
+Q.Differences between FBVs and CBVs?
+
+Q.Differences between FBVs and CBVs?
+===================================
+						CBVs														FBVs
+						--------													--------
+1).CBVs can be easily extended.					1).FBVs cannot extended easily.
+2).CBVs promotes re-usability of the code.		2).FBV cannot promotes re-usability.
+3).CBV can use OO techniques such as			3).FBV cannot use OO techniques.
+Mixins(Multiple inheritance)
+4).In CBV less coding.									4).In FBVs more coding.
+5).Default template files and context				5).Default template file and context
+object support is available.							object support is not available.
+6).There is restriction on the functionality	    6).There is no restriction on the
+hence less powerful.										functionality hence more powerful.
+7).Implicit execution flow and hence				7).Explicit execution flow hence
+reduces readability.										improves readability.
