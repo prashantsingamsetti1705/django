@@ -286,3 +286,134 @@ Note:
 Aggregate Functions:
 ---------------------------------
 Avg(), Max(), Min(), Sum(), Count() etc..............
+Aggregate Functions:
+---------------------------------
+Avg(), Max(), Min(), Sum(), Count() etc..............
+
+views.py
+------------
+from django.db.models import Avg,Max,Min,Sum,Count
+def aggregate_view(request):
+    avg = Employee.objects.all().aggregate(Avg('esal'))
+    max = Employee.objects.all().aggregate(Max('esal'))
+    min = Employee.objects.all().aggregate(Min('esal'))
+    sum = Employee.objects.all().aggregate(Sum('esal'))
+    count = Employee.objects.all().aggregate(Count('esal'))
+    my_dict = {'avg':avg['esal__avg'], 'max':max['esal__max'], 'min':min['esal__min'], 'sum':sum['esal__sum'],'count':count['esal__count']}
+    return render(request,'testapp/aggregate.html',my_dict)
+
+aggregate.html
+-----------------------
+<!DOCTYPE html>
+{% extends 'testapp/base.html' %}
+{% block body_block %}
+    <h1>Employee Aggregate Information</h1>
+<ul>
+    <h2><li>Average Salary:{{avg}}</li></h2>
+    <h2><li>Maximum Salary:{{max}}</li></h2>
+    <h2><li>Minimum Salary:{{min}}</li></h2>
+    <h2><li>Total Salary:{{sum}}</li></h2>
+    <h2><li>Number of employees:{{count}}</li></h2>
+</ul>
+{% endblock %}
+
+How to create, update and delete records:
+----------------------------------------------------------------
+1st way:
+------------
+py manage.py shell
+>>> from testapp.models import Employee
+>>> Employee.objects.all().count()#53
+>>> e = Employee(eno=1234,ename='Lilly',esal=12000,eaddr='Chennai')
+>>> e.save()
+
+2nd way:
+--------------
+>>> Employee.objects.create(eno=2345,ename='Chinny',esal=14000,eaddr='Delhi')
+
+How to add multiple records at a time:
+----------------------------------------------------------
+By using bulk_create() method
+
+>>> Employee.objects.bulk_create(
+[Employee(eno=333,ename='Katrina',esal=16000,eaddr='Mumbai'),
+Employee(eno=666,ename='Kareena',esal=18000,eaddr='Chennai'),
+Employee(eno=999,ename='Deepika',esal=17000,eaddr='Bng')]
+)
+
+How to delete single record
+------------------------------------------
+>>> e = Employee.objects.get(eno=999)
+>>> e.delete()
+
+How to delete multiple records:
+------------------------------------------------
+>>> qs = Employee.objects.filter(esal__gte=15000)
+>>> qs.count()#27
+>>> qs.delete()#(27, {'testapp.Employee': 27})
+
+How to delete all records:
+---------------------------------------
+>>> qs = Employee.objects.all()
+>>> qs.delete()
+or
+>>> Employee.objects.all().delete()
+
+How to update record:
+----------------------------------
+>>> e = Employee.objects.get(id=158)
+>>> e.ename='Sunny'
+>>> e.esal = 18000
+>>> e.eaddr = 'Mumbai'
+>>> e.save()
+
+Q.To sort all employees according ascending order eno.
+	emp_list = Employee.objects.all().order_by('eno')
+
+Q.Descending order:
+	emp_list = Employee.objects.all().order_by('-eno')
+
+Q.To get higest salaried employee?
+Arrange all employees in descending order and select first employee.
+>>> e = Employee.objects.all().order_by('-esal')[0]
+>>> e.ename
+>>> e.esal
+
+To get second highest salary:
+	>>> e = Employee.objects.all().order_by('-esal')[1]
+
+To get all emplloyees based on alphabatical order of names?
+	emp_list = Employee.objects.all().order_by('ename')
+
+To ignore case?
+	from django.db.models.functions import Lower
+	emp_list = Employee.objects.all().order_by(Lower('ename'))
+
+How to perform union operation for query set?
+-----------------------------------------------------------------------
+By using union operation, we can combine results of 2 or more queries from same model or from different models.
+
+q1 = Employee.objects.filter(esal__lt=12000)
+q2 = Employee.objects.filter(ename__startswith='s')
+emp_list = q1.union(q2)
+
+CHAPTER-12:Django Middleware
+=============================
+-->At pre processing of request or at post processing of request, if we want to perform any activity automatically then we should gof or middleware
+
+http://127.0.0.1:8000
+http://127.0.0.1:8000/
+http://127.0.0.1:8000/agg
+http://127.0.0.1:8000/agg/
+CommonMiddleware
+
+submit the form--->csrf verification
+CsrfViewMiddleware
+
+AuthenticationMiddleware
+print(request.user)
+
+http====>https===>SecurityMiddleware
+
+-->Middleware is applicable for every incoing request and outgoing response.
+-->Based on our requirement, we can configure our on middleware also.
