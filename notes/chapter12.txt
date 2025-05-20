@@ -1,0 +1,147 @@
+CHAPTER-12:Django Middleware
+=============================
+-->At pre processing of request or at post processing of request, if we want to perform any activity automatically then we should gof or middleware
+
+http://127.0.0.1:8000
+http://127.0.0.1:8000/
+http://127.0.0.1:8000/agg
+http://127.0.0.1:8000/agg/
+CommonMiddleware
+
+submit the form--->csrf verification
+CsrfViewMiddleware
+
+AuthenticationMiddleware
+print(request.user)
+
+http====>https===>SecurityMiddleware
+
+-->Middleware is applicable for every incoing request and outgoing response.
+-->Based on our requirement, we can configure our on middleware also.
+
+Middleware Structure:
+----------------------------------
+-->Based on our requirement, we can configure our own middleware also.
+-->Every customized middleware is a python class and it is the child class of object.
+
+class A(object):
+class A:
+
+This python class should contain 2-mandatory methods.
+
+1).def __init__(self,get_response):
+--------------------------------------------------
+-->get_response is a function which can be used to send request to the next level and to get required response.
+-->This method will be executed only once at the time of creating middleware class object, which is mostly happended at the time of server starting.
+
+2).def __call__(self,request):
+	This method will be executed for every request separately.
+	#code for pre processing of request
+	response = self.get_response(request)#Trigger request to the next level
+	#code for post processing of request
+	return response
+
+-->middleware classes we have to define middleware.py file(inside testapp)
+
+Demo application for custom middleware execution flow
+-------------------------------------------------------------------------------------
+django-admin startproject middlewareproject1
+py manage.py startapp testapp
+Add app in settings.py
+
+views.py
+-------------
+from django.http import HttpResponse
+def welcome_view(request):
+    print('This line added by view function')
+    return HttpResponse('<h1>Custom Middleware Demo</h1>')
+
+urls.py:
+	path('hello/',views.welcome_view)
+
+Inside testapp folder
+-------------------------------
+middleware.py
+----------------------
+class ExecutionFlowMiddleware(object):
+    def __init__(self,get_response):
+        print('init method execution......')
+        self.get_response = get_response
+
+    def __call__(self,request):
+        print('Pre processing of request')
+        response = self.get_response(request)
+        print('Post processing of request')
+        return response
+
+settings.py
+----------------
+MIDDLEWARE = [
+    'testapp.middleware.ExecutionFlowMiddleware'
+]
+
+Middleware application to show information saying under maintenance
+------------------------------------------------------------------------------------------------------------
+django-admin startproject middlewareproject2
+py manage.py startapp testapp
+Add app in settings.py
+
+views.py
+------------
+from django.http import HttpResponse
+def home_page_view(request):
+    return HttpResponse('<h1>Hello this response is from view function response</h1>')
+
+urls.py:
+	path('hello/',views.home_page_view)
+
+middleware.py
+----------------------
+from django.http import HttpResponse
+class AppMaintenanceMiddleware(object):
+    def __init__(self,get_response):
+        self.get_response = get_response
+    def __call__(selfself,request):
+        return HttpResponse('<h1>Currently application under maintenance....Pls try after 2hrs.....</h1>')
+
+settings.py
+----------------
+MIDDLEWARE = [
+    'testapp.middleware.AppMaintenanceMiddleware'
+]
+
+Middleware application to show meaningful response if view function raises any error?
+-------------------------------------------------------------------------------------------------------------------------
+django-admin startproject middlewareproject3
+py manage.py startapp testapp
+Add app in settings.py
+
+views.py
+-------------
+def home_view(request):
+    print(10/0)
+    return HttpResponse('<h1>This is from view function</h1>')
+
+urls.py:
+	path('hello/',views.home_view)
+
+middleware.py
+----------------------
+from django.http import HttpResponse
+class ErrorMessageMiddleware(object):
+    def __init__(self,get_response):
+        self.get_response = get_response
+
+    def __call__(self,request):
+        response = self.get_response(request)
+        return response
+
+    def process_exception(self,request,exception):
+        #return HttpResponse('<h1>Currently we are facing some technical problem....Pls try after some time</h1>')
+        return HttpResponse(f'<h1>Currently we are facing some technical problem<br>The Raised Exception:{exception.__class__.__name__}       <br>The Exception Message:{exception}</h1>')
+
+settings.py:
+------------------
+MIDDLEWARE = [
+	'testapp.middleware.ErrorMessageMiddleware'
+]
