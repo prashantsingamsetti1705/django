@@ -101,7 +101,7 @@ from django.http import HttpResponse
 class AppMaintenanceMiddleware(object):
     def __init__(self,get_response):
         self.get_response = get_response
-    def __call__(selfself,request):
+    def __call__(self,request):
         return HttpResponse('<h1>Currently application under maintenance....Pls try after 2hrs.....</h1>')
 
 settings.py
