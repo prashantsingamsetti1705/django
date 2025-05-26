@@ -92,3 +92,486 @@ admin.site.register(Employee)
 admin.site.register(Manager)
 
 -->It is also multi table inheritance only internally.
+Mahesh Python posted a new material: 2/5/25(Session Management)
+Posted 2 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 1/5/25(Session Management)
+Posted 1 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 30/4/25(Template Filters)
+Posted 30 Apr
+
+django.txt
+Text
+  
+Material
+Mahesh Python posted a new material: 29/4/25(Template Inheritance)
+Posted 29 Apr
+
+django.txt
+Text
+  
+Material
+Mahesh Python posted a new material: 28/4/25(Model Form)
+Posted 28 Apr
+
+django.txt
+Text
+  
+
+Announcement: 'Hi, There is No Class Today [26-04-2025]'
+Naresh Technologies
+Created 26 Apr26 Apr
+Hi,
+
+There is No Class Today [26-04-2025]
+  
+
+Announcement: 'Hi, There is No Class Today [25-04-2025]'
+Naresh Technologies
+Created 25 Apr25 Apr
+Hi,
+
+There is No Class Today [25-04-2025]
+  
+Material
+Mahesh Python posted a new material: 24/4/25(Model Based Form)
+Posted 24 Apr
+
+django.txt
+Text
+  
+Material
+Mahesh Python posted a new material: 23/4/25(Django Forms)
+Posted 23 Apr
+
+django.txt
+Text
+  
+Material
+Mahesh Python posted a new material: 22/4/25(Form Validations)
+Posted 22 Apr
+
+django.txt
+Text
+  
+
+Announcement: 'Dear Students Today No Class'
+Naresh Technologies
+Created 21 Apr21 Apr
+Dear Students 
+
+Today No Class
+  
+4).Multiple Inheritance:
+------------------------------------
+-->If model class extends multiple parent classes simultaneously then such type of inheritance is called as multiple inheritance.
+
+models.py
+---------------
+class Parent1(models.Model):
+    f1 = models.CharField(max_length=30)
+    f2 = models.CharField(max_length=30)
+class Parent2(models.Model):
+    f3 = models.CharField(max_length=30,primary_key=True)
+    f4 = models.CharField(max_length=30)
+class Child(Parent1,Parent2):
+    f5 = models.CharField(max_length=30)
+    f6 = models.CharField(max_length=30)
+
+Note:
+	1).Parent classes should not contain common fields,  otherwise we will get an error.
+	2).Internally this inheritance also multitable inheritance.
+
+Model Manager:
+------------------------
+-->We can use ModelManager to interact with database.
+-->We can get default ModelManager by using model.objects property
+-->model.objects is of type:django.db.models.manager.Manager
+
+manager = Employee.objects
+emp_list = manager.all()
+
+Q.What is the purpose of ModelManager?
+		To interact with database
+
+Q.How to get default ModelManager?
+		By using model.objects property
+
+Q.ModelManager is of what type?
+		django.db.models.manager.Manager
+
+goto shell:
+	D:\DJANGO_26MAR_4PM\miproject>py manage.py shell
+	>>> from testapp.models import Person
+	>>> type(Person.objects)
+	<class 'django.db.models.manager.Manager'>
+
+Employee model contains 1000 records
+emp_list = Employee.objects.all()-->To get all records absed on insertion order.
+Requirement:To get all records based on ascending order of eno's
+
+How to define our own custom manager:
+-------------------------------------------------------------
+-->We have to create child class for models.Manager class
+-->Whenever we are calling all() method, internally it will call get_queryset() method
+-->To customize behaviour, we have to override this method in our custom manager class.
+
+Ex:
+django-admin startproject miproject2
+py manage.py startapp testapp
+Add app in settings.py
+
+models.py
+---------------
+class Employee(models.Model):
+    eno = models.IntegerField()
+    ename = models.CharField(max_length=30)
+    esal = models.FloatField()
+    eaddr = models.CharField(max_length=30)
+
+-->makemigrations and migrate
+
+admin.py
+-------------
+from testapp.models import Employee
+class EmployeeAdmin(admin.ModelAdmin):
+    list_display = ['eno','ename','esal','eaddr']
+admin.site.register(Employee,EmployeeAdmin)
+
+populate.py
+------------------
+import os
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'miproject2.settings')
+import django
+django.setup()
+
+from faker import Faker
+from testapp.models import Employee
+from random import *
+faker = Faker()
+
+def populate(n):
+    for i in range(n):
+        feno = randint(1001,9999)
+        fename = faker.name()
+        fesal = randint(10000,20000)
+        feaddr = faker.city()
+        emp_record = Employee.objects.get_or_create(
+            eno = feno,
+            ename = fename,
+            esal = fesal,
+            eaddr = feaddr)
+n = int(input('Enter number of employees:'))
+populate(n)
+print(f'{n} Records inserted successfully..........')
+
+views.py
+-------------
+from testapp.models import Employee
+def display_view(request):
+    emp_list = Employee.objects.all()
+    return render(request,'testapp/index.html',{'emp_list':emp_list})
+
+index.html
+-----------------
+<body>
+    <div class="container" align="center">
+        <h1>Welcome To Employee List</h1><hr>
+        <table border="3">
+            <thead>
+                <th>Employee Number</th>
+                <th>Employee Name</th>
+                <th>Employee Salary</th>
+                <th>Employee Address</th>
+            </thead>
+            {% for emp in emp_list %}
+            <tr>
+                <td>{{emp.eno}}</td>
+                <td>{{emp.ename}}</td>
+                <td>{{emp.esal}}</td>
+                <td>{{emp.eaddr}}</td>
+            </tr>
+            {% endfor %}
+        </table>
+    </div>
+</body>
+
+
+DJANGO @ 4:00 PM | Mr.Mahesh [24th March]
+Mr.Mahesh
+Upcoming
+Woohoo, no work due in soon!
+Material
+Mahesh Python posted a new material: 24/5/25(Proxy model inheritance)
+Posted 24 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 23/5/25(Model Manager)
+Posted 23 May
+
+django.txt
+Text
+
+Announcement: 'Dear Students, Please provide your…'
+Naresh Technologies
+Created 23 May23 May
+Dear Students,
+
+Please provide your valuable feedback on Django with Rest API @ 4:00 PM (IST) by Mr.Mahesh
+Link: https://forms.gle/nGFy8pEXnnzy65ju5
+
+As a valued participant, Your input is crucial. Kindly Take a moment to share your feedback on our program
+
+Announcement: 'Dear Students Today No Class'
+Naresh Technologies
+Created 22 May22 May
+Dear Students
+
+Today No Class
+Material
+Mahesh Python posted a new material: 21/5/25(Model Inheritance)
+Posted 21 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 20/5/25(MIddleware)
+Posted 20 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 19/5/25(Django ORM)
+Posted 19 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 17/5/25(Django ORM)
+Posted 17 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 16/5/25(Django ORM)
+Posted 16 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 15/5/25(CBVs)
+Posted 15 May
+
+django.txt
+Text
+
+Announcement: 'Dear Students Today No Class'
+Naresh Technologies
+Created 14 May14 May
+Dear Students
+
+Today No Class
+Material
+Mahesh Python posted a new material: 13/5/25(CBV's)
+Posted 13 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 12/5/25(CBV's)
+Posted 12 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 10/5/25(FBVs)
+Posted 10 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 9/5/25(CRUD operations by FBV's)
+Posted 9 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 8/5/25(Authentication & Authorization)
+Posted 8 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 7/5/25(Authentication & Authorization)
+Posted 7 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 6/5/25(Session Management)
+Posted 6 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 5/5/25(Session Management)
+Posted 5 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 2/5/25(Session Management)
+Posted 2 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 1/5/25(Session Management)
+Posted 1 May
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 30/4/25(Template Filters)
+Posted 30 Apr
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 29/4/25(Template Inheritance)
+Posted 29 Apr
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 28/4/25(Model Form)
+Posted 28 Apr
+
+django.txt
+Text
+
+Announcement: 'Hi, There is No Class Today [26-04-2025]'
+Naresh Technologies
+Created 26 Apr26 Apr
+Hi,
+
+There is No Class Today [26-04-2025]
+
+Announcement: 'Hi, There is No Class Today [25-04-2025]'
+Naresh Technologies
+Created 25 Apr25 Apr
+Hi,
+
+There is No Class Today [25-04-2025]
+Material
+Mahesh Python posted a new material: 24/4/25(Model Based Form)
+Posted 24 Apr
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 23/4/25(Django Forms)
+Posted 23 Apr
+
+django.txt
+Text
+Material
+Mahesh Python posted a new material: 22/4/25(Form Validations)
+Posted 22 Apr
+
+django.txt
+Text
+
+Announcement: 'Dear Students Today No Class'
+Naresh Technologies
+Created 21 Apr21 Apr
+Dear Students 
+
+Today No Class
+Requirement:To get all records based on ascending order of eno's
+---------------------------------------------------------------------------------------------------
+models.py
+---------------
+class CustomManager(models.Manager):
+    def get_queryset(self):
+        qs = super().get_queryset().order_by('eno')
+        return qs
+
+class Employee(models.Model):
+	--------
+	objects = CustomManager()
+
+To display employees whose sal  in between 19000 to 20000.
+-----------------------------------------------------------------------------------------------
+class CustomManager(models.Manager):
+    def get_emp_sal_range(self,minsal,maxsal):
+        qs = super().get_queryset().filter(esal__range=(minsal,maxsal))
+        return qs
+
+views.py
+------------
+emp_list = Employee.objects.get_emp_sal_range(19000,20000)
+
+Ex:
+ class CustomManager(models.Manager):
+	def get_emp_sorted_by(self,param):
+        qs = super().get_queryset().order_by(param)
+        return qs
+
+views.py
+------------
+emp_list = Employee.objects.get_emp_sorted_by('ename')
+emp_list = Employee.objects.get_emp_sorted_by('esal')
+emp_list = Employee.objects.get_emp_sorted_by('-esal')
+
+5).Proxy Model Inheritance:
+------------------------------------------
+-->For the same model, we can provide a customized view without touching the database. This is possible by using proxy model inheritance
+-->In this inheritance, a separate new table wont be created and new proxy model also pointing to the same old table.
+
+models.py
+---------------
+class CustomManager1(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(esal__gte=19000)
+class CustomManager2(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().filter(esal__lte=12000)
+class CustomManager3(models.Manager):
+    def get_queryset(self):
+        return super().get_queryset().order_by('eno')
+
+class Employee(models.Model):
+	------------
+	objects = CustomManager1()
+class ProxyEmployee1(Employee):
+    objects = CustomManager2()
+    class Meta:
+        proxy = True
+class ProxyEmployee2(Employee):
+    objects = CustomManager3()
+    class Meta:
+        proxy = True
+
+admin.py
+--------------
+class ProxyEmployee1Admin(admin.ModelAdmin):
+    list_display = ['eno', 'ename', 'esal', 'eaddr']
+class ProxyEmployee2Admin(admin.ModelAdmin):
+    list_display = ['eno', 'ename', 'esal', 'eaddr']
+admin.site.register(ProxyEmployee1,ProxyEmployee1Admin)
+admin.site.register(ProxyEmployee2,ProxyEmployee2Admin)
+
+views.py
+------------
+emp_list = ProxyEmployee1.objects.all()
+emp_list = ProxyEmployee2.objects.all()
