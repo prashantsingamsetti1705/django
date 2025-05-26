@@ -1,0 +1,108 @@
+CHAPTR-14:Deployment of our application
+======================================
+Deployment:The process of moving application to the live/production
+
+GIT		GITHUB,GitLab,BitBucket etc......
+
+1).Version control system
+2).Remote hosting server
+3).Deployment platform
+
+Need of version control system:
+------------------------------------------------
+-->To maintain multiple versions of the same project.
+-->At any point of time, we can have backup of previous version.
+-->We can see the difference between 2 or more versions in our code base.
+-->We can run multiple versions of the same project simultaneously
+-->It helps us to track history over time and collabrate easily with others
+
+1).GIT
+2).CSV
+3).SVN
+etc.....
+
+Git vs GitHub:
+---------------------
+-->Git is a version control system that helps to track changes in our code.
+-->Github is a remote hosting platform to host our files remotely.
+-->Github is to host our remote code repository.
+
+Remote hosting platforms:GitHub, bitbucket, gitlab.....
+
+Note:
+	If our application at remote hosting platform then deployment on various platforms will become very easy.
+
+Deployment platforms:
+----------------------------------
+Where we have to deploy our application
+Ex:
+	pythonanywhere.com, heroku, DigitalOcean, Amazon cloud....
+Steps:
+---------
+Create local repo with our project
+Move this to rempote repository
+Clone this to pythonanywhere.com
+Do required configuration
+
+1.Create a new folder my_cwd
+2.copy sunnyjobs project paste in my_cwd
+3.go to gitbash
+	$ cd d:
+	$ git init
+	$ get add .
+	$ git status
+	$ git commit -m 'first commit by mahesh'
+	$ git log
+
+go to github:
+	Create new repository jobs_repo
+
+goto gitbash:
+	git remote add origin https://github.com/maheshdj123/jobs_repo.git
+	git branch -M main
+	git push -u origin main
+
+-->go to pythonanywhere.com
+-->In dashboard-->new console-->bash console
+-->Create venv
+	$mkvirtualenv --python=python3.10 myproj
+			myproj is name of the virtual environment
+
+	$pip list
+	$ git clone https://github.com/maheshdj123/jobs_repo.git
+	$ ls
+	$ cd jobs_repo
+	$ cd sunny jpbs
+	$ pwd
+
+source path:
+	/home/maheshproject/jobs_repo/sunnyjobs
+	$ls
+	$python manage.py makemigrations
+	$python manage.py migrate
+
+go to web tab:
+	Add a new web app-->manual configuration-->select python-3.10
+	give source path:/home/maheshproject/jobs_repo/sunnyjobs
+	virtual env:/home/maheshproject/.virtualenvs/myproj
+
+Reload application
+access web site
+
+configure wsgi.py
+--------------------------
+import os
+import sys
+path = '/home/maheshproject/jobs_repo/sunnyjobs'
+if path not in sys.path:
+    sys.path.append(path)
+    os.chdir(path)
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'sunnyjobs.settings')
+import django
+django.setup()
+
+we will get an error:
+	DisallowedHost at /
+
+settings.py:
+	ALLOWED_HOSTS = ['maheshproject.pythonanywhere.com']
